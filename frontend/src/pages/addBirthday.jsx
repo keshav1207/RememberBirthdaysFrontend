@@ -1,7 +1,7 @@
 import "../App.css";
 import { useForm } from "react-hook-form";
 import axios from "axios";
-export default function Home() {
+export default function AddBirthday() {
   const {
     register,
     handleSubmit,
@@ -29,7 +29,7 @@ export default function Home() {
   return (
     <div>
       <form className="addBirthdayForm" onSubmit={handleSubmit(recordBirthday)}>
-        <h1> Birthday </h1>
+        <h1> Add Birthday </h1>
         <label>First Name: </label>
         <input
           {...register("firstName", { required: "First name is required" })}
