@@ -1,3 +1,4 @@
+/* addBirthday page */
 .addBirthdayForm {
   display: flex;
   flex-direction: column;
@@ -52,6 +53,8 @@
   background-color: blue;
 }
 
+/* allBirthday page */
+
 .birthdaysContainer {
   background-color: #fff;
   max-width: 300px;
@@ -75,4 +78,66 @@
 
 .birthdaysContainer tr:hover {
   background-color: #f2f2f2;
+}
+
+/* navbar */
+.navbar {
+  background-color: #333;
+  color: white;
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  position: relative;
+  flex-wrap: wrap;
+}
+
+.navbar-logo a {
+  color: white;
+  text-decoration: none;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.menu-icon {
+  display: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  margin-left: auto;
+}
+
+.navbar-links {
+  display: flex;
+  gap: 1rem;
+  margin-left: auto;
+}
+
+.navbar-links a {
+  color: white;
+  text-decoration: none;
+  padding: 0.5rem;
+}
+
+#toggle-menu {
+  display: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .menu-icon {
+    display: block;
+  }
+
+  .navbar-links {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    background-color: #444;
+    position: absolute;
+    top: 3.5rem;
+    left: 0;
+  }
+
+  #toggle-menu:checked ~ .navbar-links {
+    display: flex;
+  }
 }
