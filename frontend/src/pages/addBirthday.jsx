@@ -1,6 +1,7 @@
 import "../App.css";
 import { useForm } from "react-hook-form";
 import axios from "axios";
+import Navbar from "../components/navbar";
 export default function AddBirthday() {
   const {
     register,
@@ -27,31 +28,37 @@ export default function AddBirthday() {
   }
 
   return (
-    <div>
-      <form className="addBirthdayForm" onSubmit={handleSubmit(recordBirthday)}>
-        <h1> Add Birthday </h1>
-        <label>First Name: </label>
-        <input
-          {...register("firstName", { required: "First name is required" })}
-        />
-        {errors.firstName && <p>{errors.firstName.message}</p>}
-        <label>Last Name: </label>
-        <input
-          {...register("lastName", { required: "Last name is required" })}
-        />
-        {errors.lastName && <p>{errors.lastName.message}</p>}
-        <label>Birthday Date: </label>
-        <input
-          type="date"
-          {...register("birthDate", {
-            required: "Birth date is required",
-            validate: (value) =>
-              new Date(value) < new Date() || "Date must be in the past",
-          })}
-        />
-        {errors.birthDate && <p>{errors.birthDate.message}</p>}
-        <button type="submit">Submit</button>
-      </form>
-    </div>
+    <>
+      <Navbar />
+      <div>
+        <form
+          className="addBirthdayForm"
+          onSubmit={handleSubmit(recordBirthday)}
+        >
+          <h1> Add Birthday </h1>
+          <label>First Name: </label>
+          <input
+            {...register("firstName", { required: "First name is required" })}
+          />
+          {errors.firstName && <p>{errors.firstName.message}</p>}
+          <label>Last Name: </label>
+          <input
+            {...register("lastName", { required: "Last name is required" })}
+          />
+          {errors.lastName && <p>{errors.lastName.message}</p>}
+          <label>Birthday Date: </label>
+          <input
+            type="date"
+            {...register("birthDate", {
+              required: "Birth date is required",
+              validate: (value) =>
+                new Date(value) < new Date() || "Date must be in the past",
+            })}
+          />
+          {errors.birthDate && <p>{errors.birthDate.message}</p>}
+          <button type="submit">Submit</button>
+        </form>
+      </div>
+    </>
   );
 }

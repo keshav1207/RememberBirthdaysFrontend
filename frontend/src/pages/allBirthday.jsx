@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect } from "react";
 import { useState } from "react";
+import Navbar from "../components/navbar";
 
 export default function AllBirthday() {
   const [birthdayData, setBirthdayData] = useState();
@@ -20,8 +21,9 @@ export default function AllBirthday() {
 
   return (
     <>
+      <Navbar />
       <div className="birthdaysContainer">
-        <h1>All Birthdays</h1>;
+        <h1>All Birthdays</h1>
         <table>
           <thead>
             <tr>
