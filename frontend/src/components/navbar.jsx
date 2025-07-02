@@ -10,8 +10,8 @@ const Navbar = () => {
         &#9776;
       </label>
       <div className="navbar-links">
-        <Link to="/all-birthdays">All Birthdays</Link>
-        <Link to="/add-birthday">Add Birthday</Link>
+        <Link to="/">All Birthdays</Link>
+        <Link to="/addBirthday">Add Birthday</Link>
         <Link to="/about">About</Link>
       </div>
     </nav>
