@@ -3,7 +3,7 @@ const Navbar = () => {
   return (
     <nav className="navbar">
       <div className="navbar-logo">
-        <Link to="/">🎉 Birthday App</Link>
+        <Link to="/">🎉 Remember Birthdays </Link>
       </div>
       <input type="checkbox" id="toggle-menu" />
       <label htmlFor="toggle-menu" className="menu-icon">

@@ -13,7 +13,7 @@ export default function AddBirthday() {
   async function recordBirthday(values) {
     console.log(values);
     try {
-      const response = await axios.post("http://localhost:8080/api/people", {
+      const response = await axios.post("http://localhost:8081/api/people", {
         firstName: values.firstName,
         lastName: values.lastName,
         birthDate: values.date,

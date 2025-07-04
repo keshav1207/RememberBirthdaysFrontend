@@ -8,7 +8,7 @@ export default function AllBirthday() {
   useEffect(() => {
     const fetchBirthdays = async () => {
       try {
-        const response = await axios.get("http://localhost:8080/api/people");
+        const response = await axios.get("http://localhost:8081/api/people");
         console.log(response);
         setBirthdayData(response.data);
       } catch (error) {
