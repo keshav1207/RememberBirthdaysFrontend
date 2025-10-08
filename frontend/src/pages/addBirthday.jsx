@@ -2,7 +2,10 @@ import "../App.css";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import Navbar from "../components/navbar";
+import { useContext } from "react";
+import { AuthContext } from "react-oauth2-code-pkce";
 export default function AddBirthday() {
+  const { token, tokenData } = useContext(AuthContext);
   const {
     register,
     handleSubmit,
@@ -13,11 +16,20 @@ export default function AddBirthday() {
   async function recordBirthday(values) {
     console.log(values);
     try {
-      const response = await axios.post("http://localhost:8081/api/people", {
-        firstName: values.firstName,
-        lastName: values.lastName,
-        birthDate: values.date,
-      });
+      const response = await axios.post(
+        "http://localhost:8081/api/people",
+        {
+          firstName: values.firstName,
+          lastName: values.lastName,
+          birthDate: values.birthDate,
+        },
+
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       reset();
 
