@@ -2,22 +2,33 @@ import axios from "axios";
 import { useEffect } from "react";
 import { useState } from "react";
 import Navbar from "../components/navbar";
+import { useContext } from "react";
+import { AuthContext } from "react-oauth2-code-pkce";
 
 export default function AllBirthday() {
+  const { token, tokenData, logIn, logOut, isAuthenticated } =
+    useContext(AuthContext);
+
   const [birthdayData, setBirthdayData] = useState();
   useEffect(() => {
     const fetchBirthdays = async () => {
       try {
-        const response = await axios.get("http://localhost:8081/api/people");
+        const response = await axios.get("http://localhost:8081/api/people", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         console.log(response);
         setBirthdayData(response.data);
       } catch (error) {
         console.log(error);
       }
     };
-
-    fetchBirthdays();
-  }, []);
+    if (token) {
+      console.log("Token available" + token);
+      fetchBirthdays();
+    }
+  }, [token]);
 
   return (
     <>
