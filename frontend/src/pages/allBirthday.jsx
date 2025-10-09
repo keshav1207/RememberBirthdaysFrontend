@@ -42,6 +42,8 @@ export default function AllBirthday() {
               <th>First Name</th>
               <th>Last Name</th>
               <th>Birth Date</th>
+              <th></th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -53,6 +55,18 @@ export default function AllBirthday() {
                     <td>{person.firstName}</td>
                     <td>{person.lastName}</td>
                     <td>{person.birthDate}</td>
+                    <td>
+                      {" "}
+                      <img src="editIcon.svg" alt="edit icon" id="editIcon" />
+                    </td>
+                    <td>
+                      {" "}
+                      <img
+                        src="deleteIcon.svg"
+                        alt="delete icon"
+                        id="deleteIcon"
+                      />
+                    </td>
                   </tr>
                 );
               })}
