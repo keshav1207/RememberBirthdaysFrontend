@@ -30,6 +30,28 @@ export default function AllBirthday() {
     }
   }, [token]);
 
+  async function handleDelete(id) {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this birthday?"
+    );
+    if (confirmed) {
+      try {
+        const response = await axios.delete(
+          `http://localhost:8081/api/people/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setBirthdayData((prev) => prev.filter((person) => person.id !== id));
+        console.log(response);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }
+
   return (
     <>
       <Navbar />
@@ -65,6 +87,7 @@ export default function AllBirthday() {
                         src="deleteIcon.svg"
                         alt="delete icon"
                         id="deleteIcon"
+                        onClick={() => handleDelete(person.id)}
                       />
                     </td>
                   </tr>
