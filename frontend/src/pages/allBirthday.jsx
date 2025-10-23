@@ -20,6 +20,11 @@ export default function AllBirthday() {
           },
         });
         console.log(response);
+        console.log(
+          tokenData.email,
+          tokenData.given_name,
+          tokenData.family_name
+        );
         setBirthdayData(response.data);
       } catch (error) {
         console.log(error);
