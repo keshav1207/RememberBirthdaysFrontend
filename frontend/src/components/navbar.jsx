@@ -12,6 +12,7 @@ const Navbar = () => {
       <div className="navbar-links">
         <Link to="/">All Birthdays</Link>
         <Link to="/addBirthday">Add Birthday</Link>
+        <Link to="/userInfo"> My Info</Link>
         <Link to="/about">About</Link>
       </div>
     </nav>
