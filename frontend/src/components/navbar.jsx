@@ -1,5 +1,17 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { AuthContext } from "react-oauth2-code-pkce";
+import { useContext } from "react";
+import { Navigate } from "react-router-dom";
 const Navbar = () => {
+  const { tokenData, logOut } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const isAdmin = tokenData?.realm_access?.roles.includes("Admin");
+
+  function handleLogOut() {
+    logOut();
+    navigate("/");
+  }
+
   return (
     <nav className="navbar">
       <div className="navbar-logo">
@@ -10,10 +22,12 @@ const Navbar = () => {
         &#9776;
       </label>
       <div className="navbar-links">
-        <Link to="/">All Birthdays</Link>
-        <Link to="/addBirthday">Add Birthday</Link>
-        <Link to="/userInfo"> My Info</Link>
+        {isAdmin ? "" : <Link to="/">All Birthdays</Link>}
+        {isAdmin ? "" : <Link to="/addBirthday">Add Birthday</Link>}
+        {isAdmin ? <Link to="/userInfo"> My Info</Link> : ""}
+        {isAdmin ? <Link to="/admin"> Admin</Link> : ""}
         <Link to="/about">About</Link>
+        <button onClick={() => handleLogOut()}>Log out</button>
       </div>
     </nav>
   );

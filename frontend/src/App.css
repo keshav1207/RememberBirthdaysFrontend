@@ -53,8 +53,9 @@
   background-color: blue;
 }
 
-/* EditBirthday  */
-.editBirthdayForm {
+/* EditBirthday/Users  */
+.editBirthdayForm,
+.editUserForm {
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -66,19 +67,22 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.editBirthdayForm h1 {
+.editBirthdayForm h1,
+.editUserForm h1 {
   text-align: center;
   margin-bottom: 20px;
   color: black;
 }
 
-.editBirthdayForm label {
+.editBirthdayForm label,
+.editUserForm label {
   margin-top: 15px;
   margin-bottom: 5px;
   font-weight: bold;
 }
 
-.editBirthdayForm input {
+.editBirthdayForm input,
+.editUserForm input {
   width: 100%;
   padding: 10px;
   font-size: 16px;
@@ -86,13 +90,15 @@
   border-radius: 4px;
 }
 
-.editBirthdayForm p {
+.editBirthdayForm p,
+.editUserForm p {
   color: red;
   font-size: 14px;
   margin: 5px 0 0 0;
 }
 
-.editBirthdayForm button {
+.editBirthdayForm button,
+.editUserForm button {
   margin-top: 20px;
   padding: 12px;
   width: 100%;
@@ -104,7 +110,8 @@
   cursor: pointer;
 }
 
-.editBirthdayForm button:hover {
+.editBirthdayForm button:hover,
+.editUserForm button:hover {
   background-color: blue;
 }
 
@@ -116,7 +123,6 @@
   margin: 50px auto;
   padding: 30px;
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .birthdaysContainer th {
@@ -286,6 +292,65 @@
 
 .userActions button:last-child:hover {
   background-color: #c82333;
+}
+
+/* Admin page */
+
+.buttonCtn {
+  margin-top: 2rem;
+  display: flex;
+  gap: 3rem;
+  justify-content: center;
+}
+
+.allBirthdays,
+.allUsers {
+  background-color: #111;
+  color: #fff;
+  border: none;
+  padding: 0.6rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.adminHeader {
+  display: flex;
+  justify-content: center;
+  margin: 0.67em 0;
+}
+
+.adminHeader p {
+  font-size: 2.5rem;
+  font-weight: "bold";
+  line-height: 1.2;
+}
+
+.userContainer {
+  background-color: #fff;
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 30px;
+  border-radius: 8px;
+}
+
+.userContainer th {
+  background-color: #00bbf0;
+  color: white;
+  padding: 10px;
+  text-align: left;
+}
+
+.userContainer td {
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+
+.userContainer tr:hover {
+  background-color: #f2f2f2;
 }
 
 /* Responsive */
