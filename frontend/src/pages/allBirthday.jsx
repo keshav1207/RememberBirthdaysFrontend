@@ -7,8 +7,7 @@ import { AuthContext } from "react-oauth2-code-pkce";
 import { useForm } from "react-hook-form";
 
 export default function AllBirthday() {
-  const { token, tokenData, logIn, logOut, isAuthenticated } =
-    useContext(AuthContext);
+  const { token, tokenData } = useContext(AuthContext);
 
   const [birthdayData, setBirthdayData] = useState();
   useEffect(() => {
@@ -34,7 +33,7 @@ export default function AllBirthday() {
       console.log("Token available" + token);
       fetchBirthdays();
     }
-  }, [token]);
+  }, [token, tokenData]);
 
   const [isEditing, setIsEditing] = useState(false);
   const [currentEditPerson, setCurrentEditPerson] = useState(null);

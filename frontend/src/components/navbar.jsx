@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "react-oauth2-code-pkce";
 import { useContext } from "react";
-import { Navigate } from "react-router-dom";
+
 const Navbar = () => {
   const { tokenData, logOut } = useContext(AuthContext);
   const navigate = useNavigate();
