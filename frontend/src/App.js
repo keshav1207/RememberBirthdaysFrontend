@@ -8,13 +8,29 @@ import AddBirthday from "./pages/addBirthday";
 import AllBirthday from "./pages/allBirthday";
 import UserInfo from "./pages/userInfo.jsx";
 import Admin from "./pages/admin.jsx";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "react-oauth2-code-pkce";
 
 function App() {
-  const { tokenData } = useContext(AuthContext);
+  const { tokenData, loading, logIn } = useContext(AuthContext);
+  // This is used when loading becomes false (auth check is done) but tokenData is still null (because logIn() hasn't completed yet
+  const [redirecting, setRedirecting] = useState(true);
   const isAdmin = tokenData?.realm_access?.roles?.includes("Admin");
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!loading) {
+      if (!tokenData) {
+        logIn();
+      } else {
+        setRedirecting(false);
+      }
+    }
+  }, [loading, tokenData, logIn]);
 
+  // Show loading while authentication is initializing
+  if (loading || redirecting) {
+    return <div>Loading...</div>;
+  }
   return (
     <Router>
       <Routes>
