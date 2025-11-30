@@ -7,22 +7,46 @@ import { AuthContext } from "react-oauth2-code-pkce";
 import axios from "axios";
 
 export default function Admin() {
-  const { token, tokenData } = useContext(AuthContext);
+  interface User {
+    userId: number;
+    firstName: string;
+    lastName: string;
+    email: string;
+  }
+
+  interface Birthday {
+    id: number;
+    firstName: string;
+    lastName: string;
+    birthDate: string;
+    user: User;
+  }
+
+  const { token } = useContext(AuthContext);
   const [isBirthdays, setIsBirthdays] = useState(false);
   const [isUsers, setIsUsers] = useState(true);
 
-  const [birthdayData, setBirthdayData] = useState([]);
-  const [UserData, setUserData] = useState([]);
-  const [isEditing, setIsEditing] = useState(false);
-  const [currentEditPerson, setCurrentEditPerson] = useState(null);
-  const [currentEditUser, setCurrentEditUser] = useState(null);
+  const [birthdayData, setBirthdayData] = useState<Birthday[]>([]);
+  const [UserData, setUserData] = useState<User[]>([]);
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [currentEditPerson, setCurrentEditPerson] = useState<Birthday | null>(
+    null
+  );
+  const [currentEditUser, setCurrentEditUser] = useState<User | null>(null);
 
   const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm();
+    register: registerBirthday,
+    handleSubmit: handleSubmitBirthday,
+    reset: resetBirthday,
+    formState: { errors: birthdayErrors },
+  } = useForm<Partial<Birthday>>();
+
+  const {
+    register: registerUser,
+    handleSubmit: handleSubmitUser,
+    reset: resetUser,
+    formState: { errors: userErrors },
+  } = useForm<Partial<User>>();
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -79,7 +103,7 @@ export default function Admin() {
     setIsBirthdays(false);
   }
 
-  async function handleDeleteBirthday(id) {
+  async function handleDeleteBirthday(id: number) {
     const confirmed = window.confirm(
       "Are you sure you want to delete this birthday?"
     );
@@ -101,7 +125,7 @@ export default function Admin() {
     }
   }
 
-  async function handleDeleteUser(id) {
+  async function handleDeleteUser(id: number) {
     const confirmed = window.confirm(
       "Are you sure you want to delete this User?"
     );
@@ -123,27 +147,27 @@ export default function Admin() {
     }
   }
 
-  function editUser(user) {
+  function editUser(user: User) {
     setIsEditing(true);
     setCurrentEditUser(user);
-    reset({
+    resetUser({
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
     });
   }
 
-  function editBirthday(person) {
+  function editBirthday(person: Birthday) {
     setIsEditing(true);
     setCurrentEditPerson(person);
-    reset({
+    resetBirthday({
       firstName: person.firstName,
       lastName: person.lastName,
       birthDate: person.birthDate,
     });
   }
 
-  async function handleEditBirthday(id, updatedData) {
+  async function handleEditBirthday(id: number, updatedData: Birthday) {
     const confirmed = window.confirm(
       "Are you sure you want to update this birthday?"
     );
@@ -164,7 +188,7 @@ export default function Admin() {
 
         setIsEditing(false);
         setCurrentEditPerson(null);
-        reset();
+        resetBirthday();
         console.log(response);
       } catch (error) {
         console.log(error);
@@ -172,7 +196,7 @@ export default function Admin() {
     }
   }
 
-  async function handleEditUser(UserId, updatedData) {
+  async function handleEditUser(UserId: number, updatedData: User) {
     const confirmed = window.confirm(
       "Are you sure you want to update this User?"
     );
@@ -194,7 +218,7 @@ export default function Admin() {
 
         setIsEditing(false);
         setCurrentEditUser(null);
-        reset();
+        resetUser();
         console.log(response);
       } catch (error) {
         console.log(error);
@@ -343,33 +367,47 @@ export default function Admin() {
         <div>
           <form
             className="editBirthdayForm"
-            onSubmit={handleSubmit((data) =>
-              handleEditBirthday(currentEditPerson.id, data)
-            )}
+            onSubmit={handleSubmitBirthday((data) => {
+              if (!currentEditPerson) return;
+              const updatedData: Birthday = {
+                ...currentEditPerson,
+                ...(data as Partial<Birthday>),
+              };
+              handleEditBirthday(currentEditPerson.id, updatedData);
+            })}
           >
             <h1> Edit Birthday </h1>
             <label>First Name: </label>
             <input
-              {...register("firstName", {
+              {...registerBirthday("firstName", {
                 required: "first name is required",
               })}
             />
-            {errors.firstName && <p>{errors.firstName.message}</p>}
+            {birthdayErrors.firstName && (
+              <p>{birthdayErrors.firstName.message}</p>
+            )}
             <label>Last Name: </label>
             <input
-              {...register("lastName", { required: "Last name is required" })}
+              {...registerBirthday("lastName", {
+                required: "Last name is required",
+              })}
             />
-            {errors.lastName && <p>{errors.lastName.message}</p>}
+            {birthdayErrors.lastName && (
+              <p>{birthdayErrors.lastName.message}</p>
+            )}
             <label>Birthday Date: </label>
             <input
               type="date"
-              {...register("birthDate", {
+              {...registerBirthday("birthDate", {
                 required: "Birth date is required",
                 validate: (value) =>
-                  new Date(value) < new Date() || "Date must be in the past",
+                  (value && new Date(value) < new Date()) ||
+                  "Date must be in the past",
               })}
             />
-            {errors.birthDate && <p>{errors.birthDate.message}</p>}
+            {birthdayErrors.birthDate && (
+              <p>{birthdayErrors.birthDate.message}</p>
+            )}
             <button type="submit">Submit</button>
           </form>
         </div>
@@ -379,27 +417,34 @@ export default function Admin() {
         <div>
           <form
             className="editUserForm"
-            onSubmit={handleSubmit((data) =>
-              handleEditUser(currentEditUser.userId, data)
-            )}
+            onSubmit={handleSubmitUser((data) => {
+              if (!currentEditUser) return;
+              const updatedUser: User = {
+                ...currentEditUser,
+                ...(data as Partial<User>),
+              };
+              handleEditUser(currentEditUser.userId, updatedUser);
+            })}
           >
             <h1> Edit User </h1>
             <label>First Name: </label>
             <input
-              {...register("firstName", {
+              {...registerUser("firstName", {
                 required: "first name is required",
               })}
             />
-            {errors.firstName && <p>{errors.firstName.message}</p>}
+            {userErrors.firstName && <p>{userErrors.firstName.message}</p>}
             <label>Last Name: </label>
             <input
-              {...register("lastName", { required: "Last name is required" })}
+              {...registerUser("lastName", {
+                required: "Last name is required",
+              })}
             />
-            {errors.lastName && <p>{errors.lastName.message}</p>}
+            {userErrors.lastName && <p>{userErrors.lastName.message}</p>}
             <label>Email: </label>
             <input
               type="email"
-              {...register("email", {
+              {...registerUser("email", {
                 required: "Email is required",
               })}
             />

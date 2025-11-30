@@ -7,9 +7,28 @@ import { AuthContext } from "react-oauth2-code-pkce";
 import { useForm } from "react-hook-form";
 
 export default function AllBirthday() {
-  const { token, tokenData } = useContext(AuthContext);
+  interface User {
+    userId: number;
+    firstName: string;
+    lastName: string;
+    email: string;
+  }
 
-  const [birthdayData, setBirthdayData] = useState();
+  interface Birthday {
+    id: number;
+    firstName: string;
+    lastName: string;
+    birthDate: string;
+    user: User;
+  }
+
+  const { token, tokenData } = useContext(AuthContext);
+  const [birthdayData, setBirthdayData] = useState<Birthday[]>([]);
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [currentEditPerson, setCurrentEditPerson] = useState<Birthday | null>(
+    null
+  );
+
   useEffect(() => {
     const fetchBirthdays = async () => {
       try {
@@ -18,12 +37,6 @@ export default function AllBirthday() {
             Authorization: `Bearer ${token}`,
           },
         });
-        console.log(response);
-        console.log(
-          tokenData.email,
-          tokenData.given_name,
-          tokenData.family_name
-        );
         setBirthdayData(response.data);
       } catch (error) {
         console.log(error);
@@ -35,9 +48,6 @@ export default function AllBirthday() {
     }
   }, [token, tokenData]);
 
-  const [isEditing, setIsEditing] = useState(false);
-  const [currentEditPerson, setCurrentEditPerson] = useState(null);
-
   const {
     register,
     handleSubmit,
@@ -45,7 +55,7 @@ export default function AllBirthday() {
     formState: { errors },
   } = useForm();
 
-  async function handleDelete(id) {
+  async function handleDelete(id: number) {
     const confirmed = window.confirm(
       "Are you sure you want to delete this birthday?"
     );
@@ -67,7 +77,7 @@ export default function AllBirthday() {
     }
   }
 
-  function editBirthday(person) {
+  function editBirthday(person: Birthday) {
     setIsEditing(true);
     setCurrentEditPerson(person);
     reset({
@@ -77,7 +87,7 @@ export default function AllBirthday() {
     });
   }
 
-  async function handleEdit(id, updatedData) {
+  async function handleEdit(id: number, updatedData: Birthday) {
     const confirmed = window.confirm(
       "Are you sure you want to update this birthday?"
     );
@@ -162,21 +172,26 @@ export default function AllBirthday() {
         <div>
           <form
             className="editBirthdayForm"
-            onSubmit={handleSubmit((data) =>
-              handleEdit(currentEditPerson.id, data)
-            )}
+            onSubmit={handleSubmit((data) => {
+              if (!currentEditPerson) return;
+              const updatedData: Birthday = {
+                ...currentEditPerson,
+                ...(data as Partial<Birthday>),
+              };
+              handleEdit(currentEditPerson.id, updatedData);
+            })}
           >
             <h1> Edit Birthday </h1>
             <label>First Name: </label>
             <input
               {...register("firstName", { required: "first name is required" })}
             />
-            {errors.firstName && <p>{errors.firstName.message}</p>}
+            {errors.firstName && <p>{errors.firstName.message as any}</p>}
             <label>Last Name: </label>
             <input
               {...register("lastName", { required: "Last name is required" })}
             />
-            {errors.lastName && <p>{errors.lastName.message}</p>}
+            {errors.lastName && <p>{errors.lastName.message as any}</p>}
             <label>Birthday Date: </label>
             <input
               type="date"
@@ -186,7 +201,7 @@ export default function AllBirthday() {
                   new Date(value) < new Date() || "Date must be in the past",
               })}
             />
-            {errors.birthDate && <p>{errors.birthDate.message}</p>}
+            {errors.birthDate && <p>{errors.birthDate.message as any}</p>}
             <button type="submit">Submit</button>
           </form>
         </div>

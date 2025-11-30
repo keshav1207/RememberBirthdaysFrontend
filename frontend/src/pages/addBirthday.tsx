@@ -5,15 +5,22 @@ import Navbar from "../components/navbar";
 import { useContext } from "react";
 import { AuthContext } from "react-oauth2-code-pkce";
 export default function AddBirthday() {
-  const { token, tokenData } = useContext(AuthContext);
+  const { token } = useContext(AuthContext);
+
+  interface BirthdayFormData {
+    firstName: string;
+    lastName: string;
+    birthDate: string;
+  }
+
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm();
+  } = useForm<BirthdayFormData>();
 
-  async function recordBirthday(values) {
+  async function recordBirthday(values: BirthdayFormData) {
     console.log(values);
     try {
       const response = await axios.post(
