@@ -6,15 +6,22 @@ import Navbar from "../components/navbar";
 import { useForm } from "react-hook-form";
 
 export default function UserInfo() {
+  interface User {
+    userId: number;
+    firstName: string;
+    lastName: string;
+    email: string;
+  }
+
   const { token, tokenData } = useContext(AuthContext);
   const userId = tokenData?.sub;
-  const [Information, setInformation] = useState();
+  const [Information, setInformation] = useState<User>();
 
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm();
 
   useEffect(() => {
@@ -50,7 +57,7 @@ export default function UserInfo() {
     }
   }, [token]);
 
-  async function handleDelete(userId) {
+  async function handleDelete(userId: number) {
     const confirmed = window.confirm(
       "Are you sure you want to delete your user account?"
     );
@@ -72,7 +79,7 @@ export default function UserInfo() {
     }
   }
 
-  const handleEdit = async (data) => {
+  const handleEdit = async (data: any) => {
     if (window.confirm("Are you sure you want to save changes?")) {
       try {
         const payload = {
@@ -108,7 +115,7 @@ export default function UserInfo() {
               {...register("firstName", { required: "First name is required" })}
             />
             {errors.firstName && (
-              <span className="error">{errors.firstName.message}</span>
+              <span className="error">{errors.firstName.message as any}</span>
             )}
           </div>
 
@@ -119,7 +126,7 @@ export default function UserInfo() {
               {...register("lastName", { required: "Last name is required" })}
             />
             {errors.lastName && (
-              <span className="error">{errors.lastName.message}</span>
+              <span className="error">{errors.lastName.message as any}</span>
             )}
           </div>
 
@@ -136,7 +143,7 @@ export default function UserInfo() {
               })}
             />
             {errors.email && (
-              <span className="error">{errors.email.message}</span>
+              <span className="error">{errors.email.message as any}</span>
             )}
           </div>
 
