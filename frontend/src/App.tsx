@@ -14,6 +14,7 @@ import Admin from "./pages/admin";
 
 function App() {
   const { tokenData, loginInProgress, logIn, error } = useContext(AuthContext);
+
   const [initialized, setInitialized] = useState(false);
   const isAdmin = tokenData?.realm_access?.roles?.includes("Admin");
 
@@ -32,10 +33,14 @@ function App() {
   return (
     <Router>
       <Routes>
-        element={isAdmin ? <Admin /> : <Navigate to="/allBirthday" />}
+        <Route
+          path="/"
+          element={isAdmin ? <Admin /> : <Navigate to="/allBirthday" />}
+        />
         <Route path="/allBirthday" element={<AllBirthday />} />
         <Route path="/addBirthday" element={<AddBirthday />} />
         <Route path="/userInfo" element={<UserInfo />} />
+
         <Route
           path="/admin"
           element={isAdmin ? <Admin /> : <Navigate to="/allBirthday" />}
