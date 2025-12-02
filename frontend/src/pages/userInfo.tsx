@@ -1,9 +1,18 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { AuthContext } from "react-oauth2-code-pkce";
-import { useEffect } from "react";
 import axios from "axios";
 import Navbar from "../components/navbar";
 import { useForm } from "react-hook-form";
+
+import {
+  Box,
+  Button,
+  TextField,
+  Typography,
+  Paper,
+  Stack,
+  Divider,
+} from "@mui/material";
 
 export default function UserInfo() {
   interface User {
@@ -15,6 +24,7 @@ export default function UserInfo() {
 
   const { token, tokenData } = useContext(AuthContext);
   const userId = tokenData?.sub;
+
   const [Information, setInformation] = useState<User>();
 
   const {
@@ -39,124 +49,141 @@ export default function UserInfo() {
       try {
         const response = await axios.get(
           `http://localhost:8081/api/user/${userId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
+          { headers: { Authorization: `Bearer ${token}` } }
         );
         setInformation(response.data);
-        console.log(response.data);
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
     };
 
-    if (token) {
-      fetchUser();
-    }
+    if (token) fetchUser();
   }, [token]);
 
   async function handleDelete(userId: number) {
     const confirmed = window.confirm(
       "Are you sure you want to delete your user account?"
     );
-    if (confirmed) {
-      try {
-        const response = await axios.delete(
-          `http://localhost:8081/api/user/${userId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+    if (!confirmed) return;
 
-        console.log(response);
-      } catch (error) {
-        console.log(error);
-      }
+    try {
+      await axios.delete(`http://localhost:8081/api/user/${userId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      alert("Your account has been deleted.");
+      // You may want to log out or redirect here
+    } catch (error) {
+      console.error(error);
     }
   }
 
   const handleEdit = async (data: any) => {
-    if (window.confirm("Are you sure you want to save changes?")) {
-      try {
-        const payload = {
-          ...data,
-          userId: userId,
-          enabled: true,
-        };
-        console.log(data);
-        const response = await axios.put(
-          `http://localhost:8081/api/user/${userId}`,
-          payload,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        setInformation(response.data);
-        alert("User info updated successfully!");
-      } catch (error) {
-        console.error(error);
-        alert("Failed to update user info.");
-      }
+    if (!window.confirm("Save changes?")) return;
+
+    try {
+      const payload = {
+        ...data,
+        userId,
+        enabled: true,
+      };
+
+      const response = await axios.put(
+        `http://localhost:8081/api/user/${userId}`,
+        payload,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      setInformation(response.data);
+      alert("User info updated!");
+    } catch (error) {
+      console.error(error);
+      alert("Failed to update user info.");
     }
   };
+
   return (
     <>
       <Navbar />
+
       {Information ? (
-        <form className="user-form">
-          <h1>User Information</h1>
+        <Box display="flex" justifyContent="center" mt={5}>
+          <Paper elevation={4} sx={{ p: 4, width: "100%", maxWidth: 500 }}>
+            <Typography variant="h5" fontWeight="bold" mb={2}>
+              User Information
+            </Typography>
+            <Divider sx={{ mb: 3 }} />
 
-          <div className="form-group">
-            <label>First Name</label>
-            <input
-              type="text"
-              {...register("firstName", { required: "First name is required" })}
-            />
-            {errors.firstName && (
-              <span className="error">{errors.firstName.message as any}</span>
-            )}
-          </div>
+            <form onSubmit={handleSubmit(handleEdit)}>
+              <Stack spacing={3}>
+                <TextField
+                  label="First Name"
+                  variant="outlined"
+                  fullWidth
+                  {...register("firstName", {
+                    required: "First name is required",
+                  })}
+                  error={!!errors.firstName}
+                  helperText={errors.firstName?.message as string}
+                />
 
-          <div className="form-group">
-            <label>Last Name</label>
-            <input
-              type="text"
-              {...register("lastName", { required: "Last name is required" })}
-            />
-            {errors.lastName && (
-              <span className="error">{errors.lastName.message as any}</span>
-            )}
-          </div>
+                <TextField
+                  label="Last Name"
+                  variant="outlined"
+                  fullWidth
+                  {...register("lastName", {
+                    required: "Last name is required",
+                  })}
+                  error={!!errors.lastName}
+                  helperText={errors.lastName?.message as string}
+                />
 
-          <div className="form-group">
-            <label>Email</label>
-            <input
-              type="email"
-              {...register("email", {
-                required: "Email is required",
-                pattern: {
-                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                  message: "Invalid email format",
-                },
-              })}
-            />
-            {errors.email && (
-              <span className="error">{errors.email.message as any}</span>
-            )}
-          </div>
+                <TextField
+                  label="Email"
+                  variant="outlined"
+                  fullWidth
+                  {...register("email", {
+                    required: "Email is required",
+                    pattern: {
+                      value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                      message: "Invalid email format",
+                    },
+                  })}
+                  error={!!errors.email}
+                  helperText={errors.email?.message as string}
+                />
 
-          <div className="userActions">
-            <button type="button" onClick={handleSubmit(handleEdit)}>
-              Update
-            </button>
+                <Stack
+                  direction="row"
+                  spacing={2}
+                  justifyContent="space-between"
+                >
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    fullWidth
+                  >
+                    Update
+                  </Button>
 
-            <button onClick={() => handleDelete(userId)}>Delete</button>
-          </div>
-        </form>
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    fullWidth
+                    onClick={() => handleDelete(Number(userId))}
+                  >
+                    Delete
+                  </Button>
+                </Stack>
+              </Stack>
+            </form>
+          </Paper>
+        </Box>
       ) : (
-        <p>Loading user info...</p>
+        <Typography textAlign="center" mt={5}>
+          Loading user info...
+        </Typography>
       )}
     </>
   );
