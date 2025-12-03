@@ -1,10 +1,33 @@
 import axios from "axios";
-import { useEffect } from "react";
-import { useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import Navbar from "../components/navbar";
-import { useContext } from "react";
 import { AuthContext } from "react-oauth2-code-pkce";
 import { useForm } from "react-hook-form";
+
+import {
+  Box,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  Typography,
+  IconButton,
+  Paper,
+  TextField,
+  Button,
+  Container,
+  Card,
+  CardContent,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+} from "@mui/material";
+
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 export default function AllBirthday() {
   interface User {
@@ -22,31 +45,31 @@ export default function AllBirthday() {
     user: User;
   }
 
-  const { token, tokenData } = useContext(AuthContext);
+  const { token } = useContext(AuthContext);
+
   const [birthdayData, setBirthdayData] = useState<Birthday[]>([]);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [currentEditPerson, setCurrentEditPerson] = useState<Birthday | null>(
     null
   );
 
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
+
   useEffect(() => {
     const fetchBirthdays = async () => {
       try {
         const response = await axios.get("http://localhost:8081/api/people", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
         setBirthdayData(response.data);
       } catch (error) {
         console.log(error);
       }
     };
-    if (token) {
-      console.log("Token available" + token);
-      fetchBirthdays();
-    }
-  }, [token, tokenData]);
+
+    if (token) fetchBirthdays();
+  }, [token]);
 
   const {
     register,
@@ -55,25 +78,23 @@ export default function AllBirthday() {
     formState: { errors },
   } = useForm();
 
-  async function handleDelete(id: number) {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this birthday?"
-    );
-    if (confirmed) {
-      try {
-        const response = await axios.delete(
-          `http://localhost:8081/api/people/${id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        setBirthdayData((prev) => prev.filter((person) => person.id !== id));
-        console.log(response);
-      } catch (error) {
-        console.log(error);
-      }
+  function confirmDelete(id: number) {
+    setDeleteTargetId(id);
+    setOpenDeleteDialog(true);
+  }
+
+  async function handleDelete() {
+    if (deleteTargetId == null) return;
+    try {
+      await axios.delete(`http://localhost:8081/api/people/${deleteTargetId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      setBirthdayData((prev) => prev.filter((p) => p.id !== deleteTargetId));
+      setOpenDeleteDialog(false);
+      setDeleteTargetId(null);
+    } catch (error) {
+      console.log(error);
     }
   }
 
@@ -96,20 +117,16 @@ export default function AllBirthday() {
         const response = await axios.put(
           `http://localhost:8081/api/people/${id}`,
           updatedData,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
+          { headers: { Authorization: `Bearer ${token}` } }
         );
+
         setBirthdayData((prev) =>
-          prev.map((person) => (person.id === id ? response.data : person))
+          prev.map((p) => (p.id === id ? response.data : p))
         );
 
         setIsEditing(false);
         setCurrentEditPerson(null);
         reset();
-        console.log(response);
       } catch (error) {
         console.log(error);
       }
@@ -119,92 +136,159 @@ export default function AllBirthday() {
   return (
     <>
       <Navbar />
+
+      <Dialog
+        open={openDeleteDialog}
+        onClose={() => setOpenDeleteDialog(false)}
+      >
+        <DialogTitle>Delete Birthday?</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to delete this birthday? This action cannot be
+            undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button variant="outlined" onClick={() => setOpenDeleteDialog(false)}>
+            Cancel
+          </Button>
+          <Button variant="contained" color="error" onClick={handleDelete}>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+
       {!isEditing && (
-        <div className="birthdaysContainer">
-          <h1>All Birthdays</h1>
-          <table>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Birth Date</th>
-                <th></th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {birthdayData &&
-                birthdayData.map((person) => {
-                  return (
-                    <tr key={person.id}>
-                      <td>{person.id}</td>
-                      <td>{person.firstName}</td>
-                      <td>{person.lastName}</td>
-                      <td>{person.birthDate}</td>
-                      <td>
-                        {" "}
-                        <img
-                          src="editIcon.svg"
-                          alt="edit icon"
-                          id="editIcon"
-                          onClick={() => editBirthday(person)}
-                        />
-                      </td>
-                      <td>
-                        {" "}
-                        <img
-                          src="deleteIcon.svg"
-                          alt="delete icon"
-                          id="deleteIcon"
-                          onClick={() => handleDelete(person.id)}
-                        />
-                      </td>
-                    </tr>
-                  );
-                })}
-            </tbody>
-          </table>
-        </div>
+        <Container maxWidth="md" sx={{ mt: 5 }}>
+          <Typography variant="h4" gutterBottom>
+            All Birthdays
+          </Typography>
+
+          <Paper elevation={3}>
+            <Table>
+              <TableHead sx={{ backgroundColor: "#f5f5f5" }}>
+                <TableRow>
+                  <TableCell>ID</TableCell>
+                  <TableCell>First Name</TableCell>
+                  <TableCell>Last Name</TableCell>
+                  <TableCell>Birth Date</TableCell>
+                  <TableCell></TableCell>
+                  <TableCell></TableCell>
+                </TableRow>
+              </TableHead>
+
+              <TableBody>
+                {birthdayData?.map((person) => (
+                  <TableRow key={person.id}>
+                    <TableCell>{person.id}</TableCell>
+                    <TableCell>{person.firstName}</TableCell>
+                    <TableCell>{person.lastName}</TableCell>
+                    <TableCell>{person.birthDate}</TableCell>
+
+                    <TableCell>
+                      <IconButton
+                        color="primary"
+                        onClick={() => editBirthday(person)}
+                      >
+                        <EditIcon />
+                      </IconButton>
+                    </TableCell>
+
+                    <TableCell>
+                      <IconButton
+                        color="error"
+                        onClick={() => confirmDelete(person.id)}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </Paper>
+        </Container>
       )}
 
       {isEditing && (
-        <div>
-          <form
-            className="editBirthdayForm"
-            onSubmit={handleSubmit((data) => {
-              if (!currentEditPerson) return;
-              const updatedData: Birthday = {
-                ...currentEditPerson,
-                ...(data as Partial<Birthday>),
-              };
-              handleEdit(currentEditPerson.id, updatedData);
-            })}
-          >
-            <h1> Edit Birthday </h1>
-            <label>First Name: </label>
-            <input
-              {...register("firstName", { required: "first name is required" })}
-            />
-            {errors.firstName && <p>{errors.firstName.message as any}</p>}
-            <label>Last Name: </label>
-            <input
-              {...register("lastName", { required: "Last name is required" })}
-            />
-            {errors.lastName && <p>{errors.lastName.message as any}</p>}
-            <label>Birthday Date: </label>
-            <input
-              type="date"
-              {...register("birthDate", {
-                required: "Birth date is required",
-                validate: (value) =>
-                  new Date(value) < new Date() || "Date must be in the past",
-              })}
-            />
-            {errors.birthDate && <p>{errors.birthDate.message as any}</p>}
-            <button type="submit">Submit</button>
-          </form>
-        </div>
+        <Container maxWidth="sm" sx={{ mt: 5 }}>
+          <Card elevation={4}>
+            <CardContent>
+              <Typography variant="h4" gutterBottom>
+                Edit Birthday
+              </Typography>
+
+              <Box
+                component="form"
+                onSubmit={handleSubmit((data) => {
+                  if (!currentEditPerson) return;
+                  const updatedData: Birthday = {
+                    ...currentEditPerson,
+                    ...(data as Partial<Birthday>),
+                  };
+                  handleEdit(currentEditPerson.id, updatedData);
+                })}
+                sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+              >
+                <TextField
+                  label="First Name"
+                  {...register("firstName", {
+                    required: "First name is required",
+                  })}
+                  error={!!errors.firstName}
+                  helperText={errors.firstName?.message as string}
+                />
+
+                <TextField
+                  label="Last Name"
+                  {...register("lastName", {
+                    required: "Last name is required",
+                  })}
+                  error={!!errors.lastName}
+                  helperText={errors.lastName?.message as string}
+                />
+
+                <TextField
+                  type="date"
+                  label="Birth Date"
+                  InputLabelProps={{ shrink: true }}
+                  {...register("birthDate", {
+                    required: "Birth date is required",
+                    validate: (value) =>
+                      new Date(value) < new Date() ||
+                      "Date must be in the past",
+                  })}
+                  error={!!errors.birthDate}
+                  helperText={errors.birthDate?.message as string}
+                />
+
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    mt: 2,
+                  }}
+                >
+                  <Button type="submit" variant="contained">
+                    Submit
+                  </Button>
+
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    onClick={() => {
+                      setIsEditing(false);
+                      setCurrentEditPerson(null);
+                      reset();
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                </Box>
+              </Box>
+            </CardContent>
+          </Card>
+        </Container>
       )}
     </>
   );
