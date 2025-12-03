@@ -56,6 +56,9 @@ export default function AllBirthday() {
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
 
+  const [openEditDialog, setOpenEditDialog] = useState(false);
+  const [pendingEditData, setPendingEditData] = useState<Birthday | null>(null);
+
   useEffect(() => {
     const fetchBirthdays = async () => {
       try {
@@ -108,28 +111,42 @@ export default function AllBirthday() {
     });
   }
 
-  async function handleEdit(id: number, updatedData: Birthday) {
-    const confirmed = window.confirm(
-      "Are you sure you want to update this birthday?"
-    );
-    if (confirmed) {
-      try {
-        const response = await axios.put(
-          `http://localhost:8081/api/people/${id}`,
-          updatedData,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+  function submitEditDialog(data: any) {
+    if (!currentEditPerson) return;
 
-        setBirthdayData((prev) =>
-          prev.map((p) => (p.id === id ? response.data : p))
-        );
+    const updatedData: Birthday = {
+      ...currentEditPerson,
+      ...(data as Partial<Birthday>),
+    };
 
-        setIsEditing(false);
-        setCurrentEditPerson(null);
-        reset();
-      } catch (error) {
-        console.log(error);
-      }
+    setPendingEditData(updatedData);
+    setOpenEditDialog(true);
+  }
+
+  async function handleEditConfirmed() {
+    if (!pendingEditData) return;
+
+    try {
+      const response = await axios.put(
+        `http://localhost:8081/api/people/${pendingEditData.id}`,
+        pendingEditData,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      setBirthdayData((prev) =>
+        prev.map((p) => (p.id === pendingEditData.id ? response.data : p))
+      );
+
+      // close edit mode
+      setIsEditing(false);
+      setCurrentEditPerson(null);
+      reset();
+
+      // close dialog
+      setOpenEditDialog(false);
+      setPendingEditData(null);
+    } catch (error) {
+      console.log(error);
     }
   }
 
@@ -154,6 +171,23 @@ export default function AllBirthday() {
           </Button>
           <Button variant="contained" color="error" onClick={handleDelete}>
             Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={openEditDialog} onClose={() => setOpenEditDialog(false)}>
+        <DialogTitle>Update Birthday?</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to update this birthday?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button variant="outlined" onClick={() => setOpenEditDialog(false)}>
+            Cancel
+          </Button>
+          <Button variant="contained" onClick={handleEditConfirmed}>
+            Confirm
           </Button>
         </DialogActions>
       </Dialog>
@@ -220,14 +254,7 @@ export default function AllBirthday() {
 
               <Box
                 component="form"
-                onSubmit={handleSubmit((data) => {
-                  if (!currentEditPerson) return;
-                  const updatedData: Birthday = {
-                    ...currentEditPerson,
-                    ...(data as Partial<Birthday>),
-                  };
-                  handleEdit(currentEditPerson.id, updatedData);
-                })}
+                onSubmit={handleSubmit(submitEditDialog)}
                 sx={{ display: "flex", flexDirection: "column", gap: 2 }}
               >
                 <TextField
