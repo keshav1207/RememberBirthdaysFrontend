@@ -13,6 +13,8 @@ import UserInfo from "./pages/userInfo";
 import Admin from "./pages/admin";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
+import CircularProgress from "@mui/material/CircularProgress";
+import Box from "@mui/material/Box";
 
 function App() {
   const { tokenData, loginInProgress, logIn, error } = useContext(AuthContext);
@@ -29,7 +31,20 @@ function App() {
   }, [loginInProgress, tokenData, logIn]);
 
   if (!initialized) {
-    return <div></div>;
+    if (!initialized) {
+      return (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100vh",
+          }}
+        >
+          <CircularProgress />
+        </Box>
+      );
+    }
   }
 
   return (
