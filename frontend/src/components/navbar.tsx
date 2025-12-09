@@ -1,7 +1,7 @@
 import { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "react-oauth2-code-pkce";
-
+import { toast } from "react-toastify";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
@@ -27,6 +27,7 @@ const Navbar = () => {
 
   function handleLogOut() {
     logOut();
+    toast.success("Logged out successfully");
     navigate("/");
   }
 
