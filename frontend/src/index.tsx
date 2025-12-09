@@ -10,6 +10,7 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
+    // This provides OAuth2 authentication context to the app
     <AuthProvider authConfig={authConfig}>
       <App />
     </AuthProvider>
