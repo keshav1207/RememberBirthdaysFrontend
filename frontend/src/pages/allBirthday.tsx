@@ -3,6 +3,7 @@ import { useEffect, useState, useContext } from "react";
 import Navbar from "../components/navbar";
 import { AuthContext } from "react-oauth2-code-pkce";
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 
 import {
   Box,
@@ -65,6 +66,7 @@ export default function AllBirthday() {
         const response = await axios.get("http://localhost:8081/api/people", {
           headers: { Authorization: `Bearer ${token}` },
         });
+
         setBirthdayData(response.data);
       } catch (error) {
         console.log(error);
@@ -93,10 +95,12 @@ export default function AllBirthday() {
         headers: { Authorization: `Bearer ${token}` },
       });
 
+      toast.success("Deleted Birthday successfully");
       setBirthdayData((prev) => prev.filter((p) => p.id !== deleteTargetId));
       setOpenDeleteDialog(false);
       setDeleteTargetId(null);
     } catch (error) {
+      toast.error("Unable to delete Birthday. Please Try again");
       console.log(error);
     }
   }
@@ -133,6 +137,7 @@ export default function AllBirthday() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
+      toast.success(" Birthday Edited successfully");
       setBirthdayData((prev) =>
         prev.map((p) => (p.id === pendingEditData.id ? response.data : p))
       );
@@ -146,6 +151,7 @@ export default function AllBirthday() {
       setOpenEditDialog(false);
       setPendingEditData(null);
     } catch (error) {
+      toast.error("Unable to edit Birthday. Please Try again");
       console.log(error);
     }
   }

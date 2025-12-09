@@ -3,6 +3,7 @@ import axios from "axios";
 import Navbar from "../components/navbar";
 import { useContext } from "react";
 import { AuthContext } from "react-oauth2-code-pkce";
+import { toast } from "react-toastify";
 
 import {
   Container,
@@ -43,9 +44,10 @@ export default function AddBirthday() {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-
+      toast.success("Added Birthday successfully");
       reset();
     } catch (error) {
+      toast.error("Unable to add Birthday. Please Try again");
       console.log(error);
     }
   }

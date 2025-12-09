@@ -11,6 +11,8 @@ import AddBirthday from "./pages/addBirthday";
 import AllBirthday from "./pages/allBirthday";
 import UserInfo from "./pages/userInfo";
 import Admin from "./pages/admin";
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
 
 function App() {
   const { tokenData, loginInProgress, logIn, error } = useContext(AuthContext);
@@ -32,20 +34,34 @@ function App() {
 
   return (
     <Router>
-      <Routes>
-        <Route
-          path="/"
-          element={isAdmin ? <Admin /> : <Navigate to="/allBirthday" />}
+      <>
+        <ToastContainer
+          position="top-center"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick={false}
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
         />
-        <Route path="/allBirthday" element={<AllBirthday />} />
-        <Route path="/addBirthday" element={<AddBirthday />} />
-        <Route path="/userInfo" element={<UserInfo />} />
+        <Routes>
+          <Route
+            path="/"
+            element={isAdmin ? <Admin /> : <Navigate to="/allBirthday" />}
+          />
+          <Route path="/allBirthday" element={<AllBirthday />} />
+          <Route path="/addBirthday" element={<AddBirthday />} />
+          <Route path="/userInfo" element={<UserInfo />} />
 
-        <Route
-          path="/admin"
-          element={isAdmin ? <Admin /> : <Navigate to="/allBirthday" />}
-        />
-      </Routes>
+          <Route
+            path="/admin"
+            element={isAdmin ? <Admin /> : <Navigate to="/allBirthday" />}
+          />
+        </Routes>
+      </>
     </Router>
   );
 }

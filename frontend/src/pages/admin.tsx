@@ -2,6 +2,7 @@ import Navbar from "../components/navbar";
 import { useEffect, useState, useContext } from "react";
 import { useForm } from "react-hook-form";
 import { AuthContext } from "react-oauth2-code-pkce";
+import { toast } from "react-toastify";
 import axios from "axios";
 
 import {
@@ -137,18 +138,21 @@ export default function Admin() {
         await axios.delete(`http://localhost:8081/api/user/${deleteTargetId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
+        toast.success("User was deleted successfully");
         setUserData((prev) => prev.filter((u) => u.userId !== deleteTargetId));
       } else {
         await axios.delete(
           `http://localhost:8081/api/people/${deleteTargetId}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
+        toast.success("Birthday was deleted successfully");
         setBirthdayData((prev) => prev.filter((p) => p.id !== deleteTargetId));
       }
       setOpenDeleteDialog(false);
       setDeleteTargetId(null);
       setDeleteType(null);
     } catch (error) {
+      toast.error("Unable to Delete. Please Try again");
       console.log(error);
     }
   }
@@ -180,6 +184,8 @@ export default function Admin() {
         updatedData,
         { headers: { Authorization: `Bearer ${token}` } }
       );
+
+      toast.success("User was edited successfully");
       setUserData((prev) =>
         prev.map((u) => (u.userId === userId ? response.data : u))
       );
@@ -187,6 +193,7 @@ export default function Admin() {
       setCurrentEditUser(null);
       resetUser();
     } catch (error) {
+      toast.error("Unable to edit User. Please Try again");
       console.log(error);
     }
   }
@@ -198,6 +205,8 @@ export default function Admin() {
         updatedData,
         { headers: { Authorization: `Bearer ${token}` } }
       );
+
+      toast.success("Birthday edited successfully");
       setBirthdayData((prev) =>
         prev.map((p) => (p.id === id ? response.data : p))
       );
@@ -205,6 +214,7 @@ export default function Admin() {
       setCurrentEditPerson(null);
       resetBirthday();
     } catch (error) {
+      toast.error("Unable to edit Birthday. Please Try again");
       console.log(error);
     }
   }

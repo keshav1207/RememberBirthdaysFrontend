@@ -3,6 +3,8 @@ import { AuthContext } from "react-oauth2-code-pkce";
 import axios from "axios";
 import Navbar from "../components/navbar";
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 import {
   Box,
@@ -12,6 +14,11 @@ import {
   Paper,
   Stack,
   Divider,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
 } from "@mui/material";
 
 export default function UserInfo() {
@@ -22,10 +29,17 @@ export default function UserInfo() {
     email: string;
   }
 
-  const { token, tokenData } = useContext(AuthContext);
+  const { token, tokenData, logOut } = useContext(AuthContext);
   const userId = tokenData?.sub;
 
   const [Information, setInformation] = useState<User>();
+
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [openEditDialog, setOpenEditDialog] = useState(false);
+
+  const [pendingEditData, setPendingEditData] = useState<any>(null);
+
+  const navigate = useNavigate();
 
   const {
     register,
@@ -60,51 +74,101 @@ export default function UserInfo() {
     if (token) fetchUser();
   }, [token]);
 
-  async function handleDelete(userId: number) {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete your user account?"
-    );
-    if (!confirmed) return;
+  function openDeleteConfirmDialog() {
+    setOpenDeleteDialog(true);
+  }
 
+  async function handleDeleteConfirmed() {
     try {
       await axios.delete(`http://localhost:8081/api/user/${userId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      alert("Your account has been deleted.");
-      // You may want to log out or redirect here
+      toast.success("Your Account was deleted successfully");
+      setOpenDeleteDialog(false);
+      logOut();
+      navigate("/");
     } catch (error) {
+      toast.error("Unable to delete your account. Please Try again");
       console.error(error);
     }
   }
 
-  const handleEdit = async (data: any) => {
-    if (!window.confirm("Save changes?")) return;
+  function submitEditForm(data: any) {
+    setPendingEditData({
+      ...data,
+      userId,
+      enabled: true,
+    });
+    setOpenEditDialog(true);
+  }
+
+  async function handleEditConfirmed() {
+    if (!pendingEditData) return;
 
     try {
-      const payload = {
-        ...data,
-        userId,
-        enabled: true,
-      };
-
       const response = await axios.put(
         `http://localhost:8081/api/user/${userId}`,
-        payload,
+        pendingEditData,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
       setInformation(response.data);
-      alert("User info updated!");
+      toast.success("Your Account was edited successfully");
+
+      setOpenEditDialog(false);
+      setPendingEditData(null);
     } catch (error) {
       console.error(error);
-      alert("Failed to update user info.");
+      toast.error("Unable to edit your account. Please Try again");
     }
-  };
+  }
 
   return (
     <>
       <Navbar />
+
+      <Dialog
+        open={openDeleteDialog}
+        onClose={() => setOpenDeleteDialog(false)}
+      >
+        <DialogTitle>Delete Account?</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to delete your account? This action cannot be
+            undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button variant="outlined" onClick={() => setOpenDeleteDialog(false)}>
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={handleDeleteConfirmed}
+          >
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={openEditDialog} onClose={() => setOpenEditDialog(false)}>
+        <DialogTitle>Update Account?</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to save these changes to your account?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button variant="outlined" onClick={() => setOpenEditDialog(false)}>
+            Cancel
+          </Button>
+          <Button variant="contained" onClick={handleEditConfirmed}>
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       {Information ? (
         <Box display="flex" justifyContent="center" mt={5}>
@@ -114,7 +178,7 @@ export default function UserInfo() {
             </Typography>
             <Divider sx={{ mb: 3 }} />
 
-            <form onSubmit={handleSubmit(handleEdit)}>
+            <form onSubmit={handleSubmit(submitEditForm)}>
               <Stack spacing={3}>
                 <TextField
                   label="First Name"
@@ -171,7 +235,7 @@ export default function UserInfo() {
                     variant="outlined"
                     color="error"
                     fullWidth
-                    onClick={() => handleDelete(Number(userId))}
+                    onClick={openDeleteConfirmDialog}
                   >
                     Delete
                   </Button>
