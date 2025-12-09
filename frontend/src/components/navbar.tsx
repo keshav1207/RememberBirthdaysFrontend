@@ -37,7 +37,7 @@ const Navbar = () => {
           variant="h6"
           component={Link}
           to="/"
-          style={{ textDecoration: "none", color: "white", flexGrow: 1 }}
+          sx={{ textDecoration: "none", color: "white", flexGrow: 1 }}
         >
           🎉 Remember Birthdays
         </Typography>
