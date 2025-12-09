@@ -25,6 +25,8 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  CircularProgress,
+  Backdrop,
 } from "@mui/material";
 
 import EditIcon from "@mui/icons-material/Edit";
@@ -65,6 +67,10 @@ export default function Admin() {
     null
   );
 
+  const [loadingInitial, setLoadingInitial] = useState(true);
+  const [loadingDelete, setLoadingDelete] = useState(false);
+  const [loadingEditSubmit, setLoadingEditSubmit] = useState(false);
+
   const {
     register: registerBirthday,
     handleSubmit: handleSubmitBirthday,
@@ -80,37 +86,35 @@ export default function Admin() {
   } = useForm<Partial<User>>();
 
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchData = async () => {
+      setLoadingInitial(true);
       try {
-        const response = await axios.get(
-          "http://localhost:8081/api/admin/allUsers",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        setUserData(response.data);
+        if (isUsers) {
+          const response = await axios.get(
+            "http://localhost:8081/api/admin/allUsers",
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
+          setUserData(response.data);
+        } else {
+          const response = await axios.get(
+            "http://localhost:8081/api/admin/allBirthdays",
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
+          setBirthdayData(response.data);
+        }
       } catch (error) {
         console.log(error);
+      } finally {
+        setLoadingInitial(false);
       }
     };
 
-    const fetchBirthdays = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:8081/api/admin/allBirthdays",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        setBirthdayData(response.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    if (isUsers) fetchUsers();
-    else fetchBirthdays();
-  }, [token, isUsers, isBirthdays]);
+    if (token) fetchData();
+  }, [token, isUsers]);
 
   function showBirthdays() {
     setIsEditing(false);
@@ -133,6 +137,8 @@ export default function Admin() {
   async function handleDelete() {
     if (deleteTargetId == null || deleteType == null) return;
 
+    setLoadingDelete(true);
+
     try {
       if (deleteType === "user") {
         await axios.delete(`http://localhost:8081/api/user/${deleteTargetId}`, {
@@ -143,7 +149,9 @@ export default function Admin() {
       } else {
         await axios.delete(
           `http://localhost:8081/api/people/${deleteTargetId}`,
-          { headers: { Authorization: `Bearer ${token}` } }
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
         );
         toast.success("Birthday was deleted successfully");
         setBirthdayData((prev) => prev.filter((p) => p.id !== deleteTargetId));
@@ -154,6 +162,8 @@ export default function Admin() {
     } catch (error) {
       toast.error("Unable to Delete. Please Try again");
       console.log(error);
+    } finally {
+      setLoadingDelete(false);
     }
   }
 
@@ -178,13 +188,15 @@ export default function Admin() {
   }
 
   async function handleEditUser(userId: number, updatedData: User) {
+    setLoadingEditSubmit(true);
     try {
       const response = await axios.put(
         `http://localhost:8081/api/user/${userId}`,
         updatedData,
-        { headers: { Authorization: `Bearer ${token}` } }
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
       );
-
       toast.success("User was edited successfully");
       setUserData((prev) =>
         prev.map((u) => (u.userId === userId ? response.data : u))
@@ -195,17 +207,21 @@ export default function Admin() {
     } catch (error) {
       toast.error("Unable to edit User. Please Try again");
       console.log(error);
+    } finally {
+      setLoadingEditSubmit(false);
     }
   }
 
   async function handleEditBirthday(id: number, updatedData: Birthday) {
+    setLoadingEditSubmit(true);
     try {
       const response = await axios.put(
         `http://localhost:8081/api/people/${id}`,
         updatedData,
-        { headers: { Authorization: `Bearer ${token}` } }
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
       );
-
       toast.success("Birthday edited successfully");
       setBirthdayData((prev) =>
         prev.map((p) => (p.id === id ? response.data : p))
@@ -216,12 +232,18 @@ export default function Admin() {
     } catch (error) {
       toast.error("Unable to edit Birthday. Please Try again");
       console.log(error);
+    } finally {
+      setLoadingEditSubmit(false);
     }
   }
 
   return (
     <>
       <Navbar />
+
+      <Backdrop open={loadingInitial} sx={{ zIndex: 2000 }}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
 
       <Dialog
         open={openDeleteDialog}
@@ -239,8 +261,18 @@ export default function Admin() {
           <Button variant="outlined" onClick={() => setOpenDeleteDialog(false)}>
             Cancel
           </Button>
-          <Button variant="contained" color="error" onClick={handleDelete}>
-            Delete
+          <Button
+            variant="contained"
+            color="error"
+            onClick={handleDelete}
+            disabled={loadingDelete}
+            startIcon={
+              loadingDelete ? (
+                <CircularProgress size={20} color="inherit" />
+              ) : null
+            }
+          >
+            {loadingDelete ? "Deleting..." : "Delete"}
           </Button>
         </DialogActions>
       </Dialog>
@@ -401,8 +433,17 @@ export default function Admin() {
                   helperText={birthdayErrors.birthDate?.message as string}
                 />
                 <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                  <Button type="submit" variant="contained">
-                    Submit
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    disabled={loadingEditSubmit}
+                    startIcon={
+                      loadingEditSubmit ? (
+                        <CircularProgress size={20} color="inherit" />
+                      ) : null
+                    }
+                  >
+                    {loadingEditSubmit ? "Saving..." : "Submit"}
                   </Button>
                   <Button
                     variant="outlined"
@@ -460,8 +501,17 @@ export default function Admin() {
                   helperText={userErrors.email?.message as string}
                 />
                 <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                  <Button type="submit" variant="contained">
-                    Submit
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    disabled={loadingEditSubmit}
+                    startIcon={
+                      loadingEditSubmit ? (
+                        <CircularProgress size={20} color="inherit" />
+                      ) : null
+                    }
+                  >
+                    {loadingEditSubmit ? "Saving..." : "Submit"}
                   </Button>
                   <Button
                     variant="outlined"

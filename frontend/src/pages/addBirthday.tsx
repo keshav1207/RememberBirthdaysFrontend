@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import Navbar from "../components/navbar";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { AuthContext } from "react-oauth2-code-pkce";
 import { toast } from "react-toastify";
 
@@ -13,10 +13,13 @@ import {
   TextField,
   Box,
   Button,
+  CircularProgress,
 } from "@mui/material";
 
 export default function AddBirthday() {
   const { token } = useContext(AuthContext);
+
+  const [loading, setLoading] = useState(false);
 
   interface BirthdayFormData {
     firstName: string;
@@ -32,6 +35,7 @@ export default function AddBirthday() {
   } = useForm<BirthdayFormData>();
 
   async function recordBirthday(values: BirthdayFormData) {
+    setLoading(true);
     try {
       await axios.post(
         "http://localhost:8081/api/people",
@@ -44,11 +48,14 @@ export default function AddBirthday() {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
+
       toast.success("Added Birthday successfully");
       reset();
     } catch (error) {
       toast.error("Unable to add Birthday. Please Try again");
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -97,8 +104,17 @@ export default function AddBirthday() {
                 helperText={errors.birthDate?.message}
               />
 
-              <Button type="submit" variant="contained">
-                Submit
+              <Button
+                type="submit"
+                variant="contained"
+                disabled={loading}
+                startIcon={
+                  loading ? (
+                    <CircularProgress size={20} color="inherit" />
+                  ) : null
+                }
+              >
+                {loading ? "Submitting..." : "Submit"}
               </Button>
             </Box>
           </CardContent>

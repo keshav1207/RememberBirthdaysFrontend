@@ -25,6 +25,8 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  CircularProgress,
+  Backdrop,
 } from "@mui/material";
 
 import EditIcon from "@mui/icons-material/Edit";
@@ -60,8 +62,14 @@ export default function AllBirthday() {
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [pendingEditData, setPendingEditData] = useState<Birthday | null>(null);
 
+  const [loadingInitial, setLoadingInitial] = useState(true);
+  const [loadingDelete, setLoadingDelete] = useState(false);
+  const [loadingSaveEdit, setLoadingSaveEdit] = useState(false);
+  const [loadingSubmit, setLoadingSubmit] = useState(false);
+
   useEffect(() => {
     const fetchBirthdays = async () => {
+      setLoadingInitial(true);
       try {
         const response = await axios.get("http://localhost:8081/api/people", {
           headers: { Authorization: `Bearer ${token}` },
@@ -70,6 +78,8 @@ export default function AllBirthday() {
         setBirthdayData(response.data);
       } catch (error) {
         console.log(error);
+      } finally {
+        setLoadingInitial(false);
       }
     };
 
@@ -90,6 +100,9 @@ export default function AllBirthday() {
 
   async function handleDelete() {
     if (deleteTargetId == null) return;
+
+    setLoadingDelete(true);
+
     try {
       await axios.delete(`http://localhost:8081/api/people/${deleteTargetId}`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -102,6 +115,8 @@ export default function AllBirthday() {
     } catch (error) {
       toast.error("Unable to delete Birthday. Please Try again");
       console.log(error);
+    } finally {
+      setLoadingDelete(false);
     }
   }
 
@@ -130,6 +145,8 @@ export default function AllBirthday() {
   async function handleEditConfirmed() {
     if (!pendingEditData) return;
 
+    setLoadingSaveEdit(true);
+
     try {
       const response = await axios.put(
         `http://localhost:8081/api/people/${pendingEditData.id}`,
@@ -137,28 +154,32 @@ export default function AllBirthday() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      toast.success(" Birthday Edited successfully");
+      toast.success("Birthday Edited successfully");
+
       setBirthdayData((prev) =>
         prev.map((p) => (p.id === pendingEditData.id ? response.data : p))
       );
 
-      // close edit mode
       setIsEditing(false);
       setCurrentEditPerson(null);
       reset();
-
-      // close dialog
       setOpenEditDialog(false);
       setPendingEditData(null);
     } catch (error) {
       toast.error("Unable to edit Birthday. Please Try again");
       console.log(error);
+    } finally {
+      setLoadingSaveEdit(false);
     }
   }
 
   return (
     <>
       <Navbar />
+
+      <Backdrop open={loadingInitial} sx={{ zIndex: 9999 }}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
 
       <Dialog
         open={openDeleteDialog}
@@ -171,12 +192,24 @@ export default function AllBirthday() {
             undone.
           </DialogContentText>
         </DialogContent>
+
         <DialogActions>
           <Button variant="outlined" onClick={() => setOpenDeleteDialog(false)}>
             Cancel
           </Button>
-          <Button variant="contained" color="error" onClick={handleDelete}>
-            Delete
+
+          <Button
+            variant="contained"
+            color="error"
+            onClick={handleDelete}
+            disabled={loadingDelete}
+            startIcon={
+              loadingDelete ? (
+                <CircularProgress size={20} color="inherit" />
+              ) : null
+            }
+          >
+            {loadingDelete ? "Deleting..." : "Delete"}
           </Button>
         </DialogActions>
       </Dialog>
@@ -188,12 +221,23 @@ export default function AllBirthday() {
             Are you sure you want to update this birthday?
           </DialogContentText>
         </DialogContent>
+
         <DialogActions>
           <Button variant="outlined" onClick={() => setOpenEditDialog(false)}>
             Cancel
           </Button>
-          <Button variant="contained" onClick={handleEditConfirmed}>
-            Confirm
+
+          <Button
+            variant="contained"
+            onClick={handleEditConfirmed}
+            disabled={loadingSaveEdit}
+            startIcon={
+              loadingSaveEdit ? (
+                <CircularProgress size={20} color="inherit" />
+              ) : null
+            }
+          >
+            {loadingSaveEdit ? "Saving..." : "Confirm"}
           </Button>
         </DialogActions>
       </Dialog>
@@ -295,15 +339,18 @@ export default function AllBirthday() {
                   helperText={errors.birthDate?.message as string}
                 />
 
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    mt: 2,
-                  }}
-                >
-                  <Button type="submit" variant="contained">
-                    Submit
+                <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    disabled={loadingSubmit}
+                    startIcon={
+                      loadingSubmit ? (
+                        <CircularProgress size={20} color="inherit" />
+                      ) : null
+                    }
+                  >
+                    {loadingSubmit ? "Saving..." : "Submit"}
                   </Button>
 
                   <Button

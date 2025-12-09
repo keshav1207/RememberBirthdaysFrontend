@@ -19,6 +19,8 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  CircularProgress,
+  Backdrop,
 } from "@mui/material";
 
 export default function UserInfo() {
@@ -38,6 +40,11 @@ export default function UserInfo() {
   const [openEditDialog, setOpenEditDialog] = useState(false);
 
   const [pendingEditData, setPendingEditData] = useState<any>(null);
+
+  const [loadingInitial, setLoadingInitial] = useState(true);
+  const [loadingDelete, setLoadingDelete] = useState(false);
+  const [loadingEditConfirm, setLoadingEditConfirm] = useState(false);
+  const [loadingSubmit, setLoadingSubmit] = useState(false);
 
   const navigate = useNavigate();
 
@@ -60,6 +67,7 @@ export default function UserInfo() {
 
   useEffect(() => {
     const fetchUser = async () => {
+      setLoadingInitial(true);
       try {
         const response = await axios.get(
           `http://localhost:8081/api/user/${userId}`,
@@ -68,6 +76,8 @@ export default function UserInfo() {
         setInformation(response.data);
       } catch (error) {
         console.error(error);
+      } finally {
+        setLoadingInitial(false);
       }
     };
 
@@ -79,6 +89,8 @@ export default function UserInfo() {
   }
 
   async function handleDeleteConfirmed() {
+    setLoadingDelete(true);
+
     try {
       await axios.delete(`http://localhost:8081/api/user/${userId}`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -91,20 +103,28 @@ export default function UserInfo() {
     } catch (error) {
       toast.error("Unable to delete your account. Please Try again");
       console.error(error);
+    } finally {
+      setLoadingDelete(false);
     }
   }
 
   function submitEditForm(data: any) {
+    setLoadingSubmit(true);
+
     setPendingEditData({
       ...data,
       userId,
       enabled: true,
     });
+
+    setLoadingSubmit(false);
     setOpenEditDialog(true);
   }
 
   async function handleEditConfirmed() {
     if (!pendingEditData) return;
+
+    setLoadingEditConfirm(true);
 
     try {
       const response = await axios.put(
@@ -121,12 +141,18 @@ export default function UserInfo() {
     } catch (error) {
       console.error(error);
       toast.error("Unable to edit your account. Please Try again");
+    } finally {
+      setLoadingEditConfirm(false);
     }
   }
 
   return (
     <>
       <Navbar />
+
+      <Backdrop open={loadingInitial} sx={{ zIndex: 2000 }}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
 
       <Dialog
         open={openDeleteDialog}
@@ -147,8 +173,14 @@ export default function UserInfo() {
             variant="contained"
             color="error"
             onClick={handleDeleteConfirmed}
+            disabled={loadingDelete}
+            startIcon={
+              loadingDelete ? (
+                <CircularProgress size={20} color="inherit" />
+              ) : null
+            }
           >
-            Delete
+            {loadingDelete ? "Deleting..." : "Delete"}
           </Button>
         </DialogActions>
       </Dialog>
@@ -164,8 +196,18 @@ export default function UserInfo() {
           <Button variant="outlined" onClick={() => setOpenEditDialog(false)}>
             Cancel
           </Button>
-          <Button variant="contained" onClick={handleEditConfirmed}>
-            Confirm
+
+          <Button
+            variant="contained"
+            onClick={handleEditConfirmed}
+            disabled={loadingEditConfirm}
+            startIcon={
+              loadingEditConfirm ? (
+                <CircularProgress size={20} color="inherit" />
+              ) : null
+            }
+          >
+            {loadingEditConfirm ? "Saving..." : "Confirm"}
           </Button>
         </DialogActions>
       </Dialog>
@@ -227,8 +269,14 @@ export default function UserInfo() {
                     variant="contained"
                     color="primary"
                     fullWidth
+                    disabled={loadingSubmit}
+                    startIcon={
+                      loadingSubmit ? (
+                        <CircularProgress size={20} color="inherit" />
+                      ) : null
+                    }
                   >
-                    Update
+                    {loadingSubmit ? "Saving..." : "Update"}
                   </Button>
 
                   <Button
