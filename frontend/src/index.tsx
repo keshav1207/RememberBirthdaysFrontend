@@ -8,9 +8,11 @@ import { AuthProvider } from "react-oauth2-code-pkce";
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
+
+//AuthProvider provides OAuth2 authentication context to the app
+
 root.render(
   <React.StrictMode>
-    // This provides OAuth2 authentication context to the app
     <AuthProvider authConfig={authConfig}>
       <App />
     </AuthProvider>
