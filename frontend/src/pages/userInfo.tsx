@@ -284,9 +284,7 @@ export default function UserInfo() {
           </Paper>
         </Box>
       ) : (
-        <Typography textAlign="center" mt={5}>
-          Loading user info...
-        </Typography>
+        <Typography textAlign="center" mt={5}></Typography>
       )}
     </>
   );
