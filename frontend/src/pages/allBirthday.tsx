@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../services/api";
 import { useEffect, useState, useContext } from "react";
 import Navbar from "../components/navbar";
 import { AuthContext } from "react-oauth2-code-pkce";
@@ -71,7 +71,7 @@ export default function AllBirthday() {
     const fetchBirthdays = async () => {
       setLoadingInitial(true);
       try {
-        const response = await axios.get("http://localhost:8081/api/people", {
+        const response = await api.get("/api/people", {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -104,7 +104,7 @@ export default function AllBirthday() {
     setLoadingDelete(true);
 
     try {
-      await axios.delete(`http://localhost:8081/api/people/${deleteTargetId}`, {
+      await api.delete(`/api/people/${deleteTargetId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -148,8 +148,8 @@ export default function AllBirthday() {
     setLoadingSaveEdit(true);
 
     try {
-      const response = await axios.put(
-        `http://localhost:8081/api/people/${pendingEditData.id}`,
+      const response = await api.put(
+        `/api/people/${pendingEditData.id}`,
         pendingEditData,
         { headers: { Authorization: `Bearer ${token}` } }
       );
