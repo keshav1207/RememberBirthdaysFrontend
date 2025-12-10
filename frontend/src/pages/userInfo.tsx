@@ -1,4 +1,5 @@
 import { useContext, useState, useEffect } from "react";
+import { User } from "../types/shared";
 import { AuthContext } from "react-oauth2-code-pkce";
 import api from "../services/api";
 import Navbar from "../components/navbar";
@@ -24,13 +25,6 @@ import {
 } from "@mui/material";
 
 export default function UserInfo() {
-  interface User {
-    userId: number;
-    firstName: string;
-    lastName: string;
-    email: string;
-  }
-
   const { token, tokenData, logOut } = useContext(AuthContext);
   const userId = tokenData?.sub;
 

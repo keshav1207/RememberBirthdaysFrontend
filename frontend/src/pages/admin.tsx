@@ -31,23 +31,9 @@ import {
 
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { User, Birthday } from "../types/shared";
 
 export default function Admin() {
-  interface User {
-    userId: number;
-    firstName: string;
-    lastName: string;
-    email: string;
-  }
-
-  interface Birthday {
-    id: number;
-    firstName: string;
-    lastName: string;
-    birthDate: string;
-    user: User;
-  }
-
   const { token } = useContext(AuthContext);
 
   const [isBirthdays, setIsBirthdays] = useState(false);

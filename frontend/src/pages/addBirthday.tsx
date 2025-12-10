@@ -1,4 +1,5 @@
 import { useForm } from "react-hook-form";
+import { BirthdayFormData } from "../types/shared";
 import api from "../services/api";
 import Navbar from "../components/navbar";
 import { useContext, useState } from "react";
@@ -20,12 +21,6 @@ export default function AddBirthday() {
   const { token } = useContext(AuthContext);
 
   const [loading, setLoading] = useState(false);
-
-  interface BirthdayFormData {
-    firstName: string;
-    lastName: string;
-    birthDate: string;
-  }
 
   const {
     register,
