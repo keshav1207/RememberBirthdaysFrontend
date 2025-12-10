@@ -68,10 +68,6 @@ const Navbar = () => {
             </>
           )}
 
-          <Button color="inherit" component={Link} to="/about">
-            About
-          </Button>
-
           <Button color="inherit" onClick={handleLogOut}>
             Log out
           </Button>
@@ -111,10 +107,6 @@ const Navbar = () => {
                 onClick={handleMenuClose}
               >
                 My Info
-              </MenuItem>
-
-              <MenuItem component={Link} to="/about" onClick={handleMenuClose}>
-                About
               </MenuItem>
             </>
           )}
