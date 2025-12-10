@@ -232,49 +232,63 @@ export default function AllBirthday() {
             All Birthdays
           </Typography>
 
-          <Paper elevation={3}>
-            <Table>
-              <TableHead sx={{ backgroundColor: "#f5f5f5" }}>
-                <TableRow>
-                  <TableCell>ID</TableCell>
-                  <TableCell>First Name</TableCell>
-                  <TableCell>Last Name</TableCell>
-                  <TableCell>Birth Date</TableCell>
-                  <TableCell></TableCell>
-                  <TableCell></TableCell>
-                </TableRow>
-              </TableHead>
-
-              <TableBody>
-                {birthdayData?.map((person) => (
-                  <TableRow key={person.id}>
-                    <TableCell>{person.id}</TableCell>
-                    <TableCell>{person.firstName}</TableCell>
-                    <TableCell>{person.lastName}</TableCell>
-                    <TableCell>{person.birthDate}</TableCell>
-
-                    <TableCell>
-                      <IconButton
-                        color="primary"
-                        onClick={() => editBirthday(person)}
-                      >
-                        <EditIcon />
-                      </IconButton>
-                    </TableCell>
-
-                    <TableCell>
-                      <IconButton
-                        color="error"
-                        onClick={() => confirmDelete(person.id)}
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </TableCell>
+          {birthdayData.length === 0 ? (
+            <Paper
+              elevation={3}
+              sx={{
+                p: 4,
+                textAlign: "center",
+              }}
+            >
+              <Typography variant="h6" color="text.secondary">
+                No birthdays have been added yet.
+              </Typography>
+            </Paper>
+          ) : (
+            <Paper elevation={3}>
+              <Table>
+                <TableHead sx={{ backgroundColor: "#f5f5f5" }}>
+                  <TableRow>
+                    <TableCell>ID</TableCell>
+                    <TableCell>First Name</TableCell>
+                    <TableCell>Last Name</TableCell>
+                    <TableCell>Birth Date</TableCell>
+                    <TableCell></TableCell>
+                    <TableCell></TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </Paper>
+                </TableHead>
+
+                <TableBody>
+                  {birthdayData.map((person) => (
+                    <TableRow key={person.id}>
+                      <TableCell>{person.id}</TableCell>
+                      <TableCell>{person.firstName}</TableCell>
+                      <TableCell>{person.lastName}</TableCell>
+                      <TableCell>{person.birthDate}</TableCell>
+
+                      <TableCell>
+                        <IconButton
+                          color="primary"
+                          onClick={() => editBirthday(person)}
+                        >
+                          <EditIcon />
+                        </IconButton>
+                      </TableCell>
+
+                      <TableCell>
+                        <IconButton
+                          color="error"
+                          onClick={() => confirmDelete(person.id)}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </Paper>
+          )}
         </Container>
       )}
 
