@@ -3,7 +3,7 @@ import { useEffect, useState, useContext } from "react";
 import { useForm } from "react-hook-form";
 import { AuthContext } from "react-oauth2-code-pkce";
 import { toast } from "react-toastify";
-import axios from "axios";
+import api from "../services/api";
 
 import {
   Box,
@@ -90,20 +90,14 @@ export default function Admin() {
       setLoadingInitial(true);
       try {
         if (isUsers) {
-          const response = await axios.get(
-            "http://localhost:8081/api/admin/allUsers",
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            }
-          );
+          const response = await api.get("/api/admin/allUsers", {
+            headers: { Authorization: `Bearer ${token}` },
+          });
           setUserData(response.data);
         } else {
-          const response = await axios.get(
-            "http://localhost:8081/api/admin/allBirthdays",
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            }
-          );
+          const response = await api.get("/api/admin/allBirthdays", {
+            headers: { Authorization: `Bearer ${token}` },
+          });
           setBirthdayData(response.data);
         }
       } catch (error) {
@@ -141,18 +135,15 @@ export default function Admin() {
 
     try {
       if (deleteType === "user") {
-        await axios.delete(`http://localhost:8081/api/user/${deleteTargetId}`, {
+        await api.delete(`/api/user/${deleteTargetId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         toast.success("User was deleted successfully");
         setUserData((prev) => prev.filter((u) => u.userId !== deleteTargetId));
       } else {
-        await axios.delete(
-          `http://localhost:8081/api/people/${deleteTargetId}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+        await api.delete(`/api/people/${deleteTargetId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         toast.success("Birthday was deleted successfully");
         setBirthdayData((prev) => prev.filter((p) => p.id !== deleteTargetId));
       }
@@ -190,13 +181,9 @@ export default function Admin() {
   async function handleEditUser(userId: number, updatedData: User) {
     setLoadingEditSubmit(true);
     try {
-      const response = await axios.put(
-        `http://localhost:8081/api/user/${userId}`,
-        updatedData,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const response = await api.put(`/api/user/${userId}`, updatedData, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       toast.success("User was edited successfully");
       setUserData((prev) =>
         prev.map((u) => (u.userId === userId ? response.data : u))
@@ -215,13 +202,9 @@ export default function Admin() {
   async function handleEditBirthday(id: number, updatedData: Birthday) {
     setLoadingEditSubmit(true);
     try {
-      const response = await axios.put(
-        `http://localhost:8081/api/people/${id}`,
-        updatedData,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const response = await api.put(`/api/people/${id}`, updatedData, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       toast.success("Birthday edited successfully");
       setBirthdayData((prev) =>
         prev.map((p) => (p.id === id ? response.data : p))

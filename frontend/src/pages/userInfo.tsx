@@ -1,6 +1,6 @@
 import { useContext, useState, useEffect } from "react";
 import { AuthContext } from "react-oauth2-code-pkce";
-import axios from "axios";
+import api from "../services/api";
 import Navbar from "../components/navbar";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -69,10 +69,9 @@ export default function UserInfo() {
     const fetchUser = async () => {
       setLoadingInitial(true);
       try {
-        const response = await axios.get(
-          `http://localhost:8081/api/user/${userId}`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+        const response = await api.get(`/api/user/${userId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         setInformation(response.data);
       } catch (error) {
         console.error(error);
@@ -92,7 +91,7 @@ export default function UserInfo() {
     setLoadingDelete(true);
 
     try {
-      await axios.delete(`http://localhost:8081/api/user/${userId}`, {
+      await api.delete(`/api/user/${userId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -127,11 +126,9 @@ export default function UserInfo() {
     setLoadingEditConfirm(true);
 
     try {
-      const response = await axios.put(
-        `http://localhost:8081/api/user/${userId}`,
-        pendingEditData,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const response = await api.put(`/api/user/${userId}`, pendingEditData, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
       setInformation(response.data);
       toast.success("Your Account was edited successfully");

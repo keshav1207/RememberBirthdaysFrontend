@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import axios from "axios";
+import api from "../services/api";
 import Navbar from "../components/navbar";
 import { useContext, useState } from "react";
 import { AuthContext } from "react-oauth2-code-pkce";
@@ -37,8 +37,8 @@ export default function AddBirthday() {
   async function recordBirthday(values: BirthdayFormData) {
     setLoading(true);
     try {
-      await axios.post(
-        "http://localhost:8081/api/people",
+      await api.post(
+        "/api/people",
         {
           firstName: values.firstName,
           lastName: values.lastName,
