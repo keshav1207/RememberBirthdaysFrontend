@@ -87,7 +87,7 @@ export default function Admin() {
           setBirthdayData(response.data);
         }
       } catch (error) {
-        console.log(error);
+        toast.error("An error occurred. Please refresh the page");
       } finally {
         setLoadingInitial(false);
       }
@@ -138,7 +138,6 @@ export default function Admin() {
       setDeleteType(null);
     } catch (error) {
       toast.error("Unable to Delete. Please Try again");
-      console.log(error);
     } finally {
       setLoadingDelete(false);
     }
@@ -179,7 +178,6 @@ export default function Admin() {
       resetUser();
     } catch (error) {
       toast.error("Unable to edit User. Please Try again");
-      console.log(error);
     } finally {
       setLoadingEditSubmit(false);
     }
@@ -200,7 +198,6 @@ export default function Admin() {
       resetBirthday();
     } catch (error) {
       toast.error("Unable to edit Birthday. Please Try again");
-      console.log(error);
     } finally {
       setLoadingEditSubmit(false);
     }

@@ -48,7 +48,6 @@ export default function AddBirthday() {
       reset();
     } catch (error) {
       toast.error("Unable to add Birthday. Please Try again");
-      console.log(error);
     } finally {
       setLoading(false);
     }

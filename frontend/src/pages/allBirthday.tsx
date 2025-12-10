@@ -63,7 +63,7 @@ export default function AllBirthday() {
 
         setBirthdayData(response.data);
       } catch (error) {
-        console.log(error);
+        toast.error("An error occurred. Please refresh the page");
       } finally {
         setLoadingInitial(false);
       }
@@ -100,7 +100,6 @@ export default function AllBirthday() {
       setDeleteTargetId(null);
     } catch (error) {
       toast.error("Unable to delete Birthday. Please Try again");
-      console.log(error);
     } finally {
       setLoadingDelete(false);
     }
@@ -153,7 +152,6 @@ export default function AllBirthday() {
       setPendingEditData(null);
     } catch (error) {
       toast.error("Unable to edit Birthday. Please Try again");
-      console.log(error);
     } finally {
       setLoadingSaveEdit(false);
     }
