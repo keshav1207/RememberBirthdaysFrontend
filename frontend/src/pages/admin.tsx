@@ -269,92 +269,107 @@ export default function Admin() {
 
       {isUsers && !isEditing && (
         <Container maxWidth="lg" sx={{ mb: 4 }}>
-          <Paper elevation={3}>
-            <Table>
-              <TableHead sx={{ backgroundColor: "#f5f5f5" }}>
-                <TableRow>
-                  <TableCell>ID</TableCell>
-                  <TableCell>First Name</TableCell>
-                  <TableCell>Last Name</TableCell>
-                  <TableCell>Email</TableCell>
-                  <TableCell></TableCell>
-                  <TableCell></TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {userData.map((user) => (
-                  <TableRow key={user.userId}>
-                    <TableCell>{user.userId}</TableCell>
-                    <TableCell>{user.firstName}</TableCell>
-                    <TableCell>{user.lastName}</TableCell>
-                    <TableCell>{user.email}</TableCell>
-                    <TableCell>
-                      <IconButton onClick={() => editUser(user)}>
-                        <EditIcon color="primary" />
-                      </IconButton>
-                    </TableCell>
-                    <TableCell>
-                      <IconButton
-                        onClick={() => confirmDelete(user.userId, "user")}
-                      >
-                        <DeleteIcon color="error" />
-                      </IconButton>
-                    </TableCell>
+          {userData.length === 0 ? (
+            <Paper elevation={3} sx={{ p: 4, textAlign: "center" }}>
+              <Typography variant="h6" color="text.secondary">
+                No users found.
+              </Typography>
+            </Paper>
+          ) : (
+            <Paper elevation={3}>
+              <Table>
+                <TableHead sx={{ backgroundColor: "#f5f5f5" }}>
+                  <TableRow>
+                    <TableCell>ID</TableCell>
+                    <TableCell>First Name</TableCell>
+                    <TableCell>Last Name</TableCell>
+                    <TableCell>Email</TableCell>
+                    <TableCell></TableCell>
+                    <TableCell></TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </Paper>
+                </TableHead>
+                <TableBody>
+                  {userData.map((user) => (
+                    <TableRow key={user.userId}>
+                      <TableCell>{user.userId}</TableCell>
+                      <TableCell>{user.firstName}</TableCell>
+                      <TableCell>{user.lastName}</TableCell>
+                      <TableCell>{user.email}</TableCell>
+                      <TableCell>
+                        <IconButton onClick={() => editUser(user)}>
+                          <EditIcon color="primary" />
+                        </IconButton>
+                      </TableCell>
+                      <TableCell>
+                        <IconButton
+                          onClick={() => confirmDelete(user.userId, "user")}
+                        >
+                          <DeleteIcon color="error" />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </Paper>
+          )}
         </Container>
       )}
 
       {isBirthdays && !isEditing && (
         <Container maxWidth="lg" sx={{ mb: 4 }}>
-          <Paper elevation={3}>
-            <Table>
-              <TableHead sx={{ backgroundColor: "#f5f5f5" }}>
-                <TableRow>
-                  <TableCell>ID</TableCell>
-                  <TableCell>First Name</TableCell>
-                  <TableCell>Last Name</TableCell>
-                  <TableCell>Birth Date</TableCell>
-                  <TableCell>User Id</TableCell>
-                  <TableCell>User Name</TableCell>
-                  <TableCell></TableCell>
-                  <TableCell></TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {birthdayData.map((person) => (
-                  <TableRow key={person.id}>
-                    <TableCell>{person.id}</TableCell>
-                    <TableCell>{person.firstName}</TableCell>
-                    <TableCell>{person.lastName}</TableCell>
-                    <TableCell>{person.birthDate}</TableCell>
-                    <TableCell>{person.user.userId}</TableCell>
-                    <TableCell>
-                      {person.user.firstName} {person.user.lastName}
-                    </TableCell>
-                    <TableCell>
-                      <IconButton onClick={() => editBirthday(person)}>
-                        <EditIcon color="primary" />
-                      </IconButton>
-                    </TableCell>
-                    <TableCell>
-                      <IconButton
-                        onClick={() => confirmDelete(person.id, "birthday")}
-                      >
-                        <DeleteIcon color="error" />
-                      </IconButton>
-                    </TableCell>
+          {birthdayData.length === 0 ? (
+            <Paper elevation={3} sx={{ p: 4, textAlign: "center" }}>
+              <Typography variant="h6" color="text.secondary">
+                No birthdays found.
+              </Typography>
+            </Paper>
+          ) : (
+            <Paper elevation={3}>
+              <Table>
+                <TableHead sx={{ backgroundColor: "#f5f5f5" }}>
+                  <TableRow>
+                    <TableCell>ID</TableCell>
+                    <TableCell>First Name</TableCell>
+                    <TableCell>Last Name</TableCell>
+                    <TableCell>Birth Date</TableCell>
+                    <TableCell>User Id</TableCell>
+                    <TableCell>User Name</TableCell>
+                    <TableCell></TableCell>
+                    <TableCell></TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </Paper>
+                </TableHead>
+                <TableBody>
+                  {birthdayData.map((person) => (
+                    <TableRow key={person.id}>
+                      <TableCell>{person.id}</TableCell>
+                      <TableCell>{person.firstName}</TableCell>
+                      <TableCell>{person.lastName}</TableCell>
+                      <TableCell>{person.birthDate}</TableCell>
+                      <TableCell>{person.user.userId}</TableCell>
+                      <TableCell>
+                        {person.user.firstName} {person.user.lastName}
+                      </TableCell>
+                      <TableCell>
+                        <IconButton onClick={() => editBirthday(person)}>
+                          <EditIcon color="primary" />
+                        </IconButton>
+                      </TableCell>
+                      <TableCell>
+                        <IconButton
+                          onClick={() => confirmDelete(person.id, "birthday")}
+                        >
+                          <DeleteIcon color="error" />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </Paper>
+          )}
         </Container>
       )}
-
       {isEditing && isBirthdays && currentEditPerson && (
         <Container maxWidth="sm" sx={{ mt: 4 }}>
           <Card>
