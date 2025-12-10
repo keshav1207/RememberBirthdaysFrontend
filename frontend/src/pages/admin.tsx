@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { AuthContext } from "react-oauth2-code-pkce";
 import { toast } from "react-toastify";
 import api from "../services/api";
+import API_ENDPOINTS from "../services/endpoints";
 
 import {
   Box,
@@ -81,7 +82,7 @@ export default function Admin() {
           });
           setUserData(response.data);
         } else {
-          const response = await api.get("/api/admin/allBirthdays", {
+          const response = await api.get(API_ENDPOINTS.ADMIN_ALL_BIRTHDAYS, {
             headers: { Authorization: `Bearer ${token}` },
           });
           setBirthdayData(response.data);
@@ -121,13 +122,13 @@ export default function Admin() {
 
     try {
       if (deleteType === "user") {
-        await api.delete(`/api/user/${deleteTargetId}`, {
+        await api.delete(API_ENDPOINTS.USER(deleteTargetId), {
           headers: { Authorization: `Bearer ${token}` },
         });
         toast.success("User was deleted successfully");
         setUserData((prev) => prev.filter((u) => u.userId !== deleteTargetId));
       } else {
-        await api.delete(`/api/people/${deleteTargetId}`, {
+        await api.delete(API_ENDPOINTS.PEOPLE_ID(deleteTargetId), {
           headers: { Authorization: `Bearer ${token}` },
         });
         toast.success("Birthday was deleted successfully");
@@ -166,7 +167,7 @@ export default function Admin() {
   async function handleEditUser(userId: number, updatedData: User) {
     setLoadingEditSubmit(true);
     try {
-      const response = await api.put(`/api/user/${userId}`, updatedData, {
+      const response = await api.put(API_ENDPOINTS.USER(userId), updatedData, {
         headers: { Authorization: `Bearer ${token}` },
       });
       toast.success("User was edited successfully");
@@ -186,7 +187,7 @@ export default function Admin() {
   async function handleEditBirthday(id: number, updatedData: Birthday) {
     setLoadingEditSubmit(true);
     try {
-      const response = await api.put(`/api/people/${id}`, updatedData, {
+      const response = await api.put(API_ENDPOINTS.PEOPLE_ID(id), updatedData, {
         headers: { Authorization: `Bearer ${token}` },
       });
       toast.success("Birthday edited successfully");

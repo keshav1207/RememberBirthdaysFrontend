@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form";
 import { BirthdayFormData } from "../types/shared";
 import api from "../services/api";
+import API_ENDPOINTS from "../services/endpoints";
 import Navbar from "../components/navbar";
 import { useContext, useState } from "react";
 import { AuthContext } from "react-oauth2-code-pkce";
@@ -33,7 +34,7 @@ export default function AddBirthday() {
     setLoading(true);
     try {
       await api.post(
-        "/api/people",
+        API_ENDPOINTS.PEOPLE,
         {
           firstName: values.firstName,
           lastName: values.lastName,

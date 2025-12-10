@@ -1,4 +1,5 @@
 import api from "../services/api";
+import API_ENDPOINTS from "../services/endpoints";
 import { useEffect, useState, useContext } from "react";
 import Navbar from "../components/navbar";
 import { AuthContext } from "react-oauth2-code-pkce";
@@ -57,10 +58,9 @@ export default function AllBirthday() {
     const fetchBirthdays = async () => {
       setLoadingInitial(true);
       try {
-        const response = await api.get("/api/people", {
+        const response = await api.get(API_ENDPOINTS.PEOPLE, {
           headers: { Authorization: `Bearer ${token}` },
         });
-
         setBirthdayData(response.data);
       } catch (error) {
         toast.error("An error occurred. Please refresh the page");
@@ -90,7 +90,7 @@ export default function AllBirthday() {
     setLoadingDelete(true);
 
     try {
-      await api.delete(`/api/people/${deleteTargetId}`, {
+      await api.delete(API_ENDPOINTS.PEOPLE_ID(deleteTargetId), {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -134,7 +134,7 @@ export default function AllBirthday() {
 
     try {
       const response = await api.put(
-        `/api/people/${pendingEditData.id}`,
+        API_ENDPOINTS.PEOPLE_ID(pendingEditData.id),
         pendingEditData,
         { headers: { Authorization: `Bearer ${token}` } }
       );
