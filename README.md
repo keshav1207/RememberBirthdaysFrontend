@@ -1,4 +1,4 @@
-# Full-Stack App – Frontend
+# RememberBirthdays App – Frontend
 
 > React + TypeScript frontend with Material-UI, part of my full-stack web application RememberBirthdays with Spring Boot backend and Keycloak authentication. Deployed on **Netlify**.
 
