@@ -34,14 +34,43 @@ const Navbar = () => {
   return (
     <AppBar position="static" color="primary">
       <Toolbar>
-        <Typography
-          variant="h6"
+        <Box
           component={Link}
           to="/"
-          sx={{ textDecoration: "none", color: "white", flexGrow: 1 }}
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            textDecoration: "none",
+            color: "white",
+            flexGrow: 1,
+            gap: 1.5,
+          }}
         >
-          🎉 Remember Birthdays
-        </Typography>
+          <Box
+            sx={{
+              width: 40,
+              height: 40,
+              borderRadius: "50%",
+              background: "linear-gradient(135deg, #ffb347 0%, #ffcc33 100%)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              boxShadow: 2,
+              mr: 1.5,
+            }}
+          >
+            <Typography variant="h5" component="span" sx={{ lineHeight: 1 }}>
+              🎉
+            </Typography>
+          </Box>
+          <Typography
+            variant="h6"
+            component="span"
+            sx={{ fontWeight: 600, letterSpacing: 1 }}
+          >
+            Remember Birthdays
+          </Typography>
+        </Box>
 
         <Box sx={{ display: { xs: "none", md: "flex" }, gap: 2 }}>
           {!isAdmin && (
