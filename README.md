@@ -52,8 +52,8 @@ This is the **frontend** of a full-stack web application:
 
 ## Screenshots
 
-![Homepage Screenshot](./public/HomePageScreenshot.png)
-![Login Page Screenshot](./public/LoginPageScreenshot.png)
+![Homepage Screenshot](./frontend/public/HomePageScreenshot.png)
+![Login Page Screenshot](./frontend/public/LoginPageScreenshot.png)
 
 ---
 
