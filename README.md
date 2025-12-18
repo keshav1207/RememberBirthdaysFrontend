@@ -91,4 +91,4 @@ git clone <your-frontend-repo-url>
 	```
 
 ## Author
-Keshav Callychurn
+Keshav Callychurn   [<img src="./ReadMe-IconsAndPics/linkedin.svg" width="20">](https://www.linkedin.com/in/keshav0799)
