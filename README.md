@@ -34,6 +34,7 @@ This is the **frontend** of a full-stack web application:
 - **Material-UI (MUI)** – UI component library for responsive design
 - **Axios** / Fetch – API calls to backend
 - **React Router** – Client-side routing
+- **react-oauth2-code-pkce** – Keycloak Integration
 - **Keycloak** – Authentication & authorization
 - **Netlify** – Frontend deployment
 
