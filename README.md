@@ -52,10 +52,8 @@ This is the **frontend** of a full-stack web application:
 
 ## Screenshots
 
-_(Replace the links below with your own screenshots or GIFs)_
-
-![Dashboard Screenshot](https://via.placeholder.com/600x400.png?text=Dashboard)  
-![Login Page Screenshot](https://via.placeholder.com/600x400.png?text=Login+Page)
+![Homepage Screenshot](./public/HomePageScreenshot.png)
+![Login Page Screenshot](./public/LoginPageScreenshot.png)
 
 ---
 
@@ -71,7 +69,7 @@ _(Replace the links below with your own screenshots or GIFs)_
 1. Clone the repository:
 
 ```bash
-git clone <your-frontend-repo-url>
+git clone https://github.com/keshav1207/RememberBirthdaysFrontend.git
 ```
 
 2. Navigate to the project folder:
