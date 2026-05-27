@@ -22,13 +22,51 @@ function App() {
   const [initialized, setInitialized] = useState(false);
   const isAdmin = tokenData?.realm_access?.roles?.includes("Admin");
 
-  useEffect(() => {
-    if (!loginInProgress && !tokenData) {
-      logIn();
-    } else if (tokenData) {
-      setInitialized(true);
-    }
-  }, [loginInProgress, tokenData, logIn]);
+  // useEffect(() => {
+  //   if (!loginInProgress && !tokenData) {
+  //     logIn();
+  //   } else if (tokenData) {
+  //     setInitialized(true);
+  //   }
+  // }, [loginInProgress, tokenData, logIn]);
+
+useEffect(() => {
+  console.log("🔥 App useEffect triggered");
+  console.log("loginInProgress:", loginInProgress);
+  console.log("tokenData:", tokenData);
+
+  const isRedirectCallback =
+    window.location.search.includes("code=");
+
+  console.log("isRedirectCallback:", isRedirectCallback);
+  console.log("URL:", window.location.href);
+
+  if (isRedirectCallback) {
+    console.log("🚨 Returning from Keycloak redirect - skipping login");
+    return;
+  }
+
+  if (!loginInProgress && !tokenData) {
+    console.log("➡️ No token found - calling logIn()");
+    logIn();
+  }
+
+  if (tokenData) {
+    console.log("✅ Token exists - initializing app");
+    setInitialized(true);
+  }
+}, [loginInProgress, tokenData, logIn]);
+
+
+
+
+
+
+
+
+
+
+
 
   if (!initialized) {
     if (!initialized) {
