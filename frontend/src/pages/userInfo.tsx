@@ -75,7 +75,7 @@ export default function UserInfo() {
     };
 
     if (token) fetchUser();
-  }, [token]);
+  }, [token, userId]);
 
   function openDeleteConfirmDialog() {
     setOpenDeleteDialog(true);

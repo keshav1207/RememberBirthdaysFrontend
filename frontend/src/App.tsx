@@ -17,7 +17,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
 
 function App() {
-  const { tokenData, loginInProgress, logIn, error } = useContext(AuthContext);
+  const { tokenData, loginInProgress, logIn } = useContext(AuthContext);
 
   const [initialized, setInitialized] = useState(false);
   const isAdmin = tokenData?.realm_access?.roles?.includes("Admin");

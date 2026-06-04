@@ -32,7 +32,7 @@ import {
 
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { User, Birthday } from "../types/shared";
+import {  Birthday } from "../types/shared";
 
 export default function AllBirthday() {
   const { token } = useContext(AuthContext);
@@ -52,7 +52,7 @@ export default function AllBirthday() {
   const [loadingInitial, setLoadingInitial] = useState(true);
   const [loadingDelete, setLoadingDelete] = useState(false);
   const [loadingSaveEdit, setLoadingSaveEdit] = useState(false);
-  const [loadingSubmit, setLoadingSubmit] = useState(false);
+  const [loadingSubmit] = useState(false);
 
   useEffect(() => {
     const fetchBirthdays = async () => {
